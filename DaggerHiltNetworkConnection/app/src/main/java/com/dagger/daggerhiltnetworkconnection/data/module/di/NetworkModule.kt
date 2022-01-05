@@ -7,7 +7,6 @@ import com.dagger.daggerhiltnetworkconnection.data.remote.MainRepositoryImpl
 import com.dagger.daggerhiltnetworkconnection.domain.main.repository.MainRepository
 import com.dagger.daggerhiltnetworkconnection.data.remote.RemoteService
 import com.dagger.daggerhiltnetworkconnection.data.mapper.ResponseMapper
-import com.dagger.daggerhiltnetworkconnection.data.network.retrofit.factory.ResponseAdapterFactory
 import com.dagger.daggerhiltnetworkconnection.utils.NetworkConnection
 import com.skydoves.sandwich.coroutines.CoroutinesResponseCallAdapterFactory
 import dagger.Module
@@ -61,7 +60,6 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideMainRepository(remoteService: RemoteService): MainRepository {
-//        return MainRepositoryImpl(remoteService, ResponseMapper::responseToUserInfo)
         return MainRepositoryImpl(remoteService)
     }
 }

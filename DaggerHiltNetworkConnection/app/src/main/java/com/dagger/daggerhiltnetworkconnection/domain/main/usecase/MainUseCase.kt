@@ -1,7 +1,10 @@
 package com.dagger.daggerhiltnetworkconnection.domain.main.usecase
 
+import com.dagger.daggerhiltnetworkconnection.data.network.status.ApiResponse
+import com.dagger.daggerhiltnetworkconnection.domain.main.entity.MainUserInfoEntity
 import com.dagger.daggerhiltnetworkconnection.domain.main.repository.MainRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class MainUseCase @Inject constructor(private val mainRepository: MainRepository, private val ioDispatcher: CoroutineDispatcher) {
@@ -12,7 +15,11 @@ class MainUseCase @Inject constructor(private val mainRepository: MainRepository
      * @History :
      *
      **/
-    fun execute(owner: String?) = mainRepository.getUserInfo(owner)
+    fun execute(owner: String?) : Flow<ApiResponse<MainUserInfoEntity>> {
+        return mainRepository.getUserInfo(owner)
+    }
+
+
 
 
 

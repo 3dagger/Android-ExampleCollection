@@ -11,17 +11,16 @@ abstract class BaseApiResponse {
             val response = apiCall()
             if(response.isSuccessful) {
                 val body = response.body()
-                val code = response.code()
                 body?.let {
-                    return ApiResponse.Success(body, code)
+                    return ApiResponse.Success(body)
                 }
             }
-            error("${response.code()} ${response.message()}")
+            return error("${response.code()} ${response.message()}")
         }catch (e: Exception) {
-            error(e.message ?: e.toString())
+            return error(e.message ?: e.toString())
         }
     }
 
     private fun <T> error(errorMessage: String, errorCode: Int): ApiResponse<T> =
-        ApiResponse.ApiError("Api call failed :: $errorMessage", errorCode)
+        ApiResponse.Error("Api call failed :: $errorMessage")
 }

@@ -4,10 +4,13 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.InputFilter
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.dagger.daggerhiltnetworkconnection.R
 import com.dagger.daggerhiltnetworkconnection.presentation.base.BaseActivity
 import com.dagger.daggerhiltnetworkconnection.databinding.ActivityMainBinding
+import com.dagger.daggerhiltnetworkconnection.presentation.extensions.openActivity
 import com.dagger.daggerhiltnetworkconnection.presentation.extensions.textChange
+import com.dagger.daggerhiltnetworkconnection.presentation.ui.user.info.UserInfoActivity
 import com.dagger.daggerhiltnetworkconnection.utils.Resource.Status.*
 import com.orhanobut.logger.Logger
 import dagger.hilt.android.AndroidEntryPoint
@@ -27,51 +30,29 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
             activity = this@MainActivity
             vm = viewModel
         }
-
-
     }
 
     override fun onProcess() {
         initViewSetup()
-        subscribeObservers()
     }
 
     private fun initViewSetup() {
-//        customProgress = CustomProgress(context = this@MainActivity)
-
-        GlobalScope.launch {
+        lifecycleScope.launch {
             binding.edtSearchText.apply {
                 textChange()
                     .debounce(500)
                     .filter {  it?.length!! > 0 }
                     .onEach {
-                        Logger.d("flow로 받는다 $it")
-//                        customProgress.show()
-//                        viewModel.getUserInfo(userId = it.toString())
                         viewModel.searchUserInfoResult(owner = it.toString())
                     }
                     .launchIn(this@launch)
             }
         }
-
-        viewModel.userInfo.observe(this) {
-            Logger.d("res :: $it")
-        }
-
-
-
-//        binding.edtSearchText.apply {
-//            this.filters = arrayOf(InputFilter.LengthFilter(30))
-////            this.setTextColor(Color.WHITE)
-////            this.setHintTextColor(Color.WHITE)
-//        }
     }
 
-    private fun subscribeObservers() {
-        viewModel.isLoading.observe(this) {
-            Logger.d("isLoading :: $it")
+    fun moveUserInfoActivity() {
+        openActivity(UserInfoActivity::class.java) {
+//            putString()
         }
     }
-
-
 }

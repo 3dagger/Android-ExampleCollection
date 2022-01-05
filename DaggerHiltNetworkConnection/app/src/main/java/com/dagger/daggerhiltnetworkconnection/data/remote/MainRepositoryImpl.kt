@@ -51,7 +51,6 @@ class MainRepositoryImpl @Inject constructor(
 
     override fun getUserInfo(owner: String?): Flow<ApiResponse<MainUserInfoEntity>> = flow {
         val response = remoteService.getUserInfo(owner!!)
-        Logger.d("response :: $response")
         emit( safeApiCall { response })
     }.flowOn(Dispatchers.IO)
 }

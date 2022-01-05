@@ -5,8 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import com.google.android.material.snackbar.Snackbar
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -41,4 +43,18 @@ fun EditText.textChange(): Flow<CharSequence?> {
             removeTextChangedListener(listener)
         }
     }.onStart {  emit(text) }
+}
+
+fun View.snackbar(
+    message: String = "",
+    actionMessage: String = "",
+    anchorView: View? = null,
+    length: Int = Snackbar.LENGTH_LONG,
+    action: (() -> Unit)? = null
+): Snackbar {
+    val snackbar = Snackbar.make(this, message, length)
+    if (action != null) snackbar.setAction(actionMessage) { action.invoke() }
+    if (anchorView != null) snackbar.anchorView = anchorView
+    snackbar.show()
+    return snackbar
 }

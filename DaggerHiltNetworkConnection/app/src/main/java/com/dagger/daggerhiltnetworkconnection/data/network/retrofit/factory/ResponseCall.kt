@@ -2,6 +2,7 @@ package com.dagger.daggerhiltnetworkconnection.data.network.retrofit.factory
 
 import retrofit2.Call
 import com.dagger.daggerhiltnetworkconnection.data.network.status.ApiResponse
+import com.orhanobut.logger.Logger
 import okhttp3.Request
 import okio.Timeout
 import retrofit2.Callback
@@ -10,8 +11,7 @@ import retrofit2.Response
 
 internal class ResponseCall<T> constructor(private val callDelegate: Call<T>) : Call<ApiResponse<T>> {
 
-    override fun enqueue(callback: Callback<ApiResponse<T>>) = callDelegate.enqueue(object :
-        Callback<T> {
+    override fun enqueue(callback: Callback<ApiResponse<T>>) = callDelegate.enqueue(object : Callback<T> {
         override fun onResponse(call: Call<T>, response: Response<T>) {
             response.body()?.let {
                 when(response.code()) {

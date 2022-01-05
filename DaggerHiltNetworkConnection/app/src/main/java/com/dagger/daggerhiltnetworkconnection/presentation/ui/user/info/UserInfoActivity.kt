@@ -23,7 +23,7 @@ class UserInfoActivity : BaseActivity<ActivityDetailBinding>(R.layout.activity_d
 
         if(intent != null) argumentUserId = intent.getStringExtra(INTENT_ARGUMENT_USER_ID)
 
-        Logger.d("res :: ${intent.getStringExtra(INTENT_ARGUMENT_USER_ID)}")
+
     }
 
     override fun onProcess() {

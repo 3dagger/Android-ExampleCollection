@@ -1,5 +1,6 @@
 package com.dagger.daggerhiltnetworkconnection.data.network.retrofit.factory
 
+import com.dagger.daggerhiltnetworkconnection.data.network.status.ApiResponse
 import retrofit2.Call
 import retrofit2.CallAdapter
 import retrofit2.Retrofit
@@ -12,7 +13,7 @@ class ResponseAdapterFactory : CallAdapter.Factory() {
         check(returnType is ParameterizedType)
 
         val responseType = getParameterUpperBound(0, returnType)
-        if (getRawType(responseType) != Result::class.java) return null
+        if (getRawType(responseType) != ApiResponse::class.java) return null
         check(responseType is ParameterizedType)
 
 

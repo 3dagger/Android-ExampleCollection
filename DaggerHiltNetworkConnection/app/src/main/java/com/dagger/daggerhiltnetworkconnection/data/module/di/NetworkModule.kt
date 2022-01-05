@@ -41,8 +41,8 @@ object NetworkModule {
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(BASE_URL)
+//            .addCallAdapterFactory(ResponseAdapterFactory())
             .addConverterFactory(MoshiConverterFactory.create())
-            .addCallAdapterFactory(ResponseAdapterFactory())
             .build()
     }
 
@@ -61,6 +61,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideMainRepository(remoteService: RemoteService): MainRepository {
-        return MainRepositoryImpl(remoteService, ResponseMapper::responseToUserInfo)
+//        return MainRepositoryImpl(remoteService, ResponseMapper::responseToUserInfo)
+        return MainRepositoryImpl(remoteService)
     }
 }

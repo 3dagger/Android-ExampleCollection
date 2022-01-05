@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MainRepository {
     fun getUserInfo(owner: String?): Flow<ApiResponse<MainUserInfoEntity>>
+//    fun getUserInfo(owner: String?): Flow<ApiResponse<List<MainUserInfoEntity>>>
 //    fun getUserInfo(owner: String?): Flow<MainUserInfoEntity>
 }
 

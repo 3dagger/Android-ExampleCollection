@@ -54,6 +54,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
             }
         }
 
+        viewModel.userInfo.observe(this) {
+            Logger.d("res :: $it")
+        }
 
 
 

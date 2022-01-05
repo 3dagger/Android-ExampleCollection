@@ -26,17 +26,30 @@ class MainViewModel @Inject constructor(private val mainUseCase: MainUseCase) : 
     fun searchUserInfoResult(owner: String?) {
         viewModelScope.launch {
             mainUseCase.execute(owner)
-                .catch { e ->
-                    Logger.d("exception message :: ${e.message}")
+                .catch {
+                    Logger.d("exception ")
                 }
-                .collect {
-                    Logger.d("it :: $it")
-                    _userInfo.value = it
+                .collect { values ->
+                    Logger.d("values :: $values.")
+                    _userInfo.value = values
                 }
+
+            }
         }
+//        viewModelScope.launch {
+//            mainUseCase.execute(owner)
+//                .catch { e ->
+//                    Logger.d("exception message :: ${e.message}\nlocalizedMessage :: ${e.localizedMessage}\ncause :: ${e.cause}")
+//                }
+////                .filterIsInstance<ApiResponse.Success<List<MainUserInfoEntity>>>()
+//                .collect {
+//                    Logger.d("it :: $it")
+//                    _userInfo.value = it
+//                }
+//
+//        }
 
 
-    }
 
 
 //    fun searchUserInfoResult(owner: String?) {

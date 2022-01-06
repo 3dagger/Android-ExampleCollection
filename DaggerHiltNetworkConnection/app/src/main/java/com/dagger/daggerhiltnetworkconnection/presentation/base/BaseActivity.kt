@@ -1,21 +1,17 @@
 package com.dagger.daggerhiltnetworkconnection.presentation.base
 
-import android.net.ConnectivityManager
 import android.os.Bundle
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingComponent
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.Observer
-import com.dagger.daggerhiltnetworkconnection.presentation.extensions.toast
-import com.dagger.daggerhiltnetworkconnection.utils.NetworkConnection
-import com.orhanobut.logger.Logger
 import javax.inject.Inject
+
 
 abstract class BaseActivity<T : ViewDataBinding> constructor(@LayoutRes val contentLayoutId: Int): AppCompatActivity() {
     private var bindingComponent: DataBindingComponent? = DataBindingUtil.getDefaultComponent()
-    @Inject lateinit var networkConnection: NetworkConnection
+//    @Inject lateinit var networkConnection: NetworkConnection
 
     init {
         addOnContextAvailableListener { binding.notifyChange() }
@@ -36,12 +32,12 @@ abstract class BaseActivity<T : ViewDataBinding> constructor(@LayoutRes val cont
         super.onCreate(savedInstanceState)
         binding.lifecycleOwner = this@BaseActivity
 
-        networkConnection.observe(this@BaseActivity, Observer { isConnected ->
-            when(isConnected) {
-                true -> toast("네트워크 연결되었습니다.")
-                false -> toast("네트워크 연결 해제되었습니다.")
-            }
-        })
+//        networkConnection.observe(this@BaseActivity, Observer { isConnected ->
+//            when(isConnected) {
+//                true -> toast("네트워크 연결되었습니다.")
+//                false -> toast("네트워크 연결 해제되었습니다.")
+//            }
+//        })
 
         initView(savedInstanceState = savedInstanceState)
         onProcess()

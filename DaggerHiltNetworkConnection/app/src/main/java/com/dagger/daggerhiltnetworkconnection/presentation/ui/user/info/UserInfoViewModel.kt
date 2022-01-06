@@ -2,8 +2,8 @@ package com.dagger.daggerhiltnetworkconnection.presentation.ui.user.info
 
 import androidx.lifecycle.MutableLiveData
 import com.dagger.daggerhiltnetworkconnection.presentation.base.BaseViewModel
-import com.dagger.daggerhiltnetworkconnection.domain.main.entity.MainUserInfoEntity
-import com.dagger.daggerhiltnetworkconnection.domain.main.usecase.MainUseCase
+import kr.dagger.domain.main.entity.MainUserInfoEntity
+import kr.dagger.domain.main.usecase.MainUseCase
 import com.dagger.daggerhiltnetworkconnection.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

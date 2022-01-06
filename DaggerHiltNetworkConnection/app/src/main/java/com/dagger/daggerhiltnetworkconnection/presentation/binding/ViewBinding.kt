@@ -15,8 +15,6 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.dagger.daggerhiltnetworkconnection.R
-import com.github.florent37.glidepalette.BitmapPalette
-import com.github.florent37.glidepalette.GlidePalette
 import com.google.android.material.card.MaterialCardView
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.flow.callbackFlow

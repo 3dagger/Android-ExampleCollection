@@ -5,11 +5,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.NO_POSITION
-import com.bumptech.glide.load.engine.Resource
 import com.dagger.daggerhiltnetworkconnection.databinding.ItemUserRepositoryBinding
-import com.dagger.daggerhiltnetworkconnection.domain.model.UserRepo
 import com.orhanobut.logger.Logger
-import com.skydoves.bindables.binding
+import kr.dagger.domain.entity.UserRepo
 
 class RepositoryRecyclerViewAdapter : RecyclerView.Adapter<RepositoryRecyclerViewAdapter.RepositoryViewHolder>() {
 
@@ -45,7 +43,8 @@ class RepositoryRecyclerViewAdapter : RecyclerView.Adapter<RepositoryRecyclerVie
         }
 
         fun bindRepo(repo : UserRepo) {
-            binding.repo = repo
+//            binding.repo = repo
+
         }
     }
 

@@ -1,11 +1,10 @@
 package com.dagger.daggerhiltnetworkconnection.presentation.ui.main
 
 import androidx.lifecycle.*
-import com.dagger.daggerhiltnetworkconnection.data.network.status.ApiResponse
+import kr.dagger.domain.state.ApiResponse
 import com.dagger.daggerhiltnetworkconnection.presentation.base.BaseViewModel
-import com.dagger.daggerhiltnetworkconnection.domain.main.entity.MainUserInfoEntity
-import com.dagger.daggerhiltnetworkconnection.domain.main.usecase.MainUseCase
-import com.orhanobut.logger.Logger
+import kr.dagger.domain.main.entity.MainUserInfoEntity
+import kr.dagger.domain.main.usecase.MainUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

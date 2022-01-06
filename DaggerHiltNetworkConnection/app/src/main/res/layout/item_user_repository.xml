@@ -6,7 +6,7 @@
     <data>
         <variable
             name="repo"
-            type="com.dagger.daggerhiltnetworkconnection.domain.model.UserRepo" />
+            type="kr.dagger.domain.entity.UserRepo" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

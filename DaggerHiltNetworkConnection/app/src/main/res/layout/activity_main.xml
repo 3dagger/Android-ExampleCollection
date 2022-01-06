@@ -37,7 +37,7 @@
 
         <ImageView
             android:id="@+id/imgGithub"
-            loadImage="@{vm.userInfo.data.avatarUrl}"
+            loadImage="@{vm.userInfo.data.avatar_Url}"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:src="@drawable/ic_img_github"

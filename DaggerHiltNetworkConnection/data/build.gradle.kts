@@ -57,7 +57,6 @@ dependencies {
     implementation(Dependencies.androidX.core)
     implementation(Dependencies.androidX.appCompat)
     implementation(Dependencies.material)
-    implementation(project(mapOf("path" to ":app")))
     testImplementation(Dependencies.test.junit)
     androidTestImplementation(Dependencies.androidX.junit)
     androidTestImplementation(Dependencies.androidX.espresso)

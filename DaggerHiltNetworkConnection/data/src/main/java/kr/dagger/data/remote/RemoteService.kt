@@ -1,6 +1,5 @@
 package kr.dagger.data.remote
 
-import com.dagger.daggerhiltnetworkconnection.Constants.PERSONAL_GIT_HUB_TOKEN
 import kr.dagger.domain.main.entity.MainUserInfoEntity
 import kr.dagger.data.ApiData
 import kr.dagger.domain.entity.UserRepo
@@ -11,7 +10,9 @@ import retrofit2.http.Headers
 import retrofit2.http.Path
 
 interface RemoteService {
-    @Headers("Authorization: $PERSONAL_GIT_HUB_TOKEN")
+//    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
+//    @Headers("Authorization: $PERSONAL_GIT_HUB_TOKEN")
+    @Headers("Authorization: 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")
     @GET("${ApiData.API_GITHUB_USER_INFO}{userId}")
     suspend fun getUserInfo(@Path("userId") userId: String): Response<MainUserInfoEntity>
 

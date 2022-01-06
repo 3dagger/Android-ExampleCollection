@@ -43,7 +43,7 @@ class RepositoryRecyclerViewAdapter : RecyclerView.Adapter<RepositoryRecyclerVie
         }
 
         fun bindRepo(repo : UserRepo) {
-//            binding.repo = repo
+            binding.repo = repo
 
         }
     }

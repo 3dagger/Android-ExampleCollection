@@ -1,5 +1,6 @@
 package com.dagger.daggerhiltnetworkconnection.presentation.ui.main
 
+
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputFilter
@@ -34,6 +35,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     override fun onProcess() {
         initViewSetup()
+
+        viewModel.userInfo.observe(this) {
+            Logger.d("it.data :: ${it.data}")
+        }
     }
 
     private fun initViewSetup() {

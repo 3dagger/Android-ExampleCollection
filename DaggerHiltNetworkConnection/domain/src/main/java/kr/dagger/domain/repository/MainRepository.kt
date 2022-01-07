@@ -1,7 +1,7 @@
-package kr.dagger.domain.main.repository
+package kr.dagger.domain.repository
 
 import kr.dagger.domain.state.ApiResponse
-import kr.dagger.domain.main.entity.MainUserInfoEntity
+import kr.dagger.domain.entity.MainUserInfoEntity
 import kotlinx.coroutines.flow.Flow
 
 interface MainRepository {

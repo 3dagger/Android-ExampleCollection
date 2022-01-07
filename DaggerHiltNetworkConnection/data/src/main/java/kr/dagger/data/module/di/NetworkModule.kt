@@ -1,6 +1,6 @@
 package kr.dagger.data.module.di
 
-import kr.dagger.domain.main.repository.MainRepository
+import kr.dagger.domain.repository.MainRepository
 import com.orhanobut.logger.BuildConfig
 import dagger.Module
 import dagger.Provides
@@ -12,6 +12,7 @@ import kr.dagger.data.remote.RemoteService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
@@ -29,14 +30,20 @@ object NetworkModule {
             .build()
     }
 
+    @Singleton
+    @Provides
+    fun provideConverterFactory(): GsonConverterFactory =
+        GsonConverterFactory.create()
+
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofit(okHttpClient: OkHttpClient, gsonConverterFactory: GsonConverterFactory): Retrofit {
         return Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(BASE_URL)
+            .addConverterFactory(gsonConverterFactory)
 //            .addCallAdapterFactory(ResponseAdapterFactory())
-            .addConverterFactory(MoshiConverterFactory.create())
+//            .addConverterFactory(MoshiConverterFactory.create())
             .build()
     }
 

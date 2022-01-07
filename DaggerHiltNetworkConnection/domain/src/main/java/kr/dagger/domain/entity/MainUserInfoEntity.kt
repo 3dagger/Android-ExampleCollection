@@ -1,4 +1,4 @@
-package kr.dagger.domain.main.entity
+package kr.dagger.domain.entity
 
 //import com.squareup.moshi.Json
 //import com.squareup.moshi.JsonClass
@@ -18,7 +18,7 @@ data class MainUserInfoEntity(
     val login: String?,
     val id: Int,
     val url: String?,
-    val avatar_Url: String?,
-    val html_Url: String?,
+    val avatar_url: String?,
+    val html_url: String?,
     val name: String?
 )

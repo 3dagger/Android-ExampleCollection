@@ -1,4 +1,4 @@
-package kr.dagger.domain.main.entity
+package kr.dagger.domain.entity
 
 data class BaseResponse(
     val message: String,

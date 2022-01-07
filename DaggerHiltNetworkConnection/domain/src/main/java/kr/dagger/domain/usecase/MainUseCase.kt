@@ -1,13 +1,12 @@
 package kr.dagger.domain.usecase
 
 import kr.dagger.domain.state.ApiResponse
-import kr.dagger.domain.main.entity.MainUserInfoEntity
-import kr.dagger.domain.main.repository.MainRepository
-import kotlinx.coroutines.CoroutineDispatcher
+import kr.dagger.domain.entity.MainUserInfoEntity
+import kr.dagger.domain.repository.MainRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class MainUseCase @Inject constructor(private val mainRepository: MainRepository, private val ioDispatcher: CoroutineDispatcher) {
+class MainUseCase @Inject constructor(private val mainRepository: MainRepository) {
     /**
      * @author : 이수현
      * @Date : 2021/12/27 7:03 오후

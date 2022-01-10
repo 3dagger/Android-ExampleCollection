@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.NO_POSITION
 import com.dagger.daggerhiltnetworkconnection.databinding.ItemUserRepositoryBinding
 import com.orhanobut.logger.Logger
-import kr.dagger.domain.entity.UserRepo
+import kr.dagger.domain.model.UserRepo
 
 class RepositoryRecyclerViewAdapter : RecyclerView.Adapter<RepositoryRecyclerViewAdapter.RepositoryViewHolder>() {
 

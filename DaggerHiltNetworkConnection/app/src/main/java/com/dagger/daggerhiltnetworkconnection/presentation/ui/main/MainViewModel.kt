@@ -4,22 +4,22 @@ import androidx.lifecycle.*
 import kr.dagger.domain.state.ApiResponse
 import com.dagger.daggerhiltnetworkconnection.presentation.base.BaseViewModel
 import com.orhanobut.logger.Logger
-import kr.dagger.domain.entity.MainUserInfoEntity
+import kr.dagger.domain.model.UserProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kr.dagger.domain.usecase.MainUseCase
+import kr.dagger.domain.usecase.GetUserProfileUseCase
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(private val mainUseCase: MainUseCase) : BaseViewModel() {
-    private val _userInfo: MutableLiveData<ApiResponse<MainUserInfoEntity>> = MutableLiveData()
-    val userInfo: MutableLiveData<ApiResponse<MainUserInfoEntity>>
+class MainViewModel @Inject constructor(private val getUserProfileUseCase: GetUserProfileUseCase) : BaseViewModel() {
+    private val _userInfo: MutableLiveData<ApiResponse<UserProfile>> = MutableLiveData()
+    val userInfo: MutableLiveData<ApiResponse<UserProfile>>
         get() = _userInfo
 
     fun searchUserInfoResult(owner: String?) {
         viewModelScope.launch {
-            mainUseCase.execute(owner)
+            getUserProfileUseCase.execute(owner)
                 .onStart {
                     Logger.d("onStart")
                     handleLoading(true)

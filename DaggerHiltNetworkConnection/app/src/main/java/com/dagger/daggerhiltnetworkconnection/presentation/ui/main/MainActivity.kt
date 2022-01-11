@@ -37,12 +37,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         initViewSetup()
 
         viewModel.userInfo.observe(this) {
-            Logger.d("userInfo it :: ${it}")
+            Logger.d("userInfo it :: ${it.message}")
         }
 
-        viewModel.userProfile.observe(this) {
-            Logger.d("userProfile it :: ${it}")
-        }
+
     }
 
     private fun initViewSetup() {

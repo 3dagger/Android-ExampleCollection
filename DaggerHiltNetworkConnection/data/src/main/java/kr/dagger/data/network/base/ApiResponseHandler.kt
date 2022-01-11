@@ -1,6 +1,7 @@
 package kr.dagger.data.network.base
 
 
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import kr.dagger.domain.state.ApiResponse
@@ -12,7 +13,7 @@ import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-abstract class BaseApiResponse {
+abstract class ApiResponseHandler {
 
     suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): ApiResponse<T> {
         try {
@@ -23,14 +24,21 @@ abstract class BaseApiResponse {
                 body?.let {
                     return ApiResponse.Success(body)
                 }
+            }else {
+                Logger.d("response is not successful :: ${response.errorBody()?.string()}")
+//                ApiResponse.Error(errorBodyHandle(response.errorBody(), ))
             }
-            return ApiResponse.Error("Fail")
+//            val errorMessage = response.errorBody()!!.string()
+            return ApiResponse.Error("")
         }catch (e: Exception) {
             return ApiResponse.Error("Fail")
 //            ApiResponse.Error(message = e.message, )
 
         }
     }
+
+//    protected abstract fun errorBodyHandle(message: String, documentation_url: String)
+
 
 //    val NETWORK_ERROR_UNKNWON = 110
 //    val NETWORK_ERROR_TIMEOUT = 111

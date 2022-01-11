@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(private val getUserProfileUseCase: GetUserProfileUseCase) : BaseViewModel() {
     private val _userInfo: MutableLiveData<ApiResponse<UserProfile>> = MutableLiveData()
-    val userInfo: MutableLiveData<ApiResponse<UserProfile>>
+    val userInfo: LiveData<ApiResponse<UserProfile>>
         get() = _userInfo
 
     fun searchUserInfoResult(owner: String?) {
@@ -37,14 +37,4 @@ class MainViewModel @Inject constructor(private val getUserProfileUseCase: GetUs
             }
         }
 
-    private val _userProfile = MutableLiveData<ApiResponse<UserProfile>>()
-    val userProfile: LiveData<ApiResponse<UserProfile>>
-        get() = _userProfile
-
-    fun searchUserProfile(owner: String?) {
-        viewModelScope.launch {
-            getUserProfileUseCase.execute(owner)
-                .onEach { _userProfile.value = it }
-        }
-    }
 }

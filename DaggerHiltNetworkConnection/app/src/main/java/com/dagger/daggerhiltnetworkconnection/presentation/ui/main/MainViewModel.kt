@@ -36,4 +36,15 @@ class MainViewModel @Inject constructor(private val getUserProfileUseCase: GetUs
 
             }
         }
+
+    private val _userProfile = MutableLiveData<ApiResponse<UserProfile>>()
+    val userProfile: LiveData<ApiResponse<UserProfile>>
+        get() = _userProfile
+
+    fun searchUserProfile(owner: String?) {
+        viewModelScope.launch {
+            getUserProfileUseCase.execute(owner)
+                .onEach { _userProfile.value = it }
+        }
+    }
 }

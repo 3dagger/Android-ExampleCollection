@@ -37,7 +37,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
         initViewSetup()
 
         viewModel.userInfo.observe(this) {
-            Logger.d("it.data :: ${it.data}")
+            Logger.d("userInfo it :: ${it}")
+        }
+
+        viewModel.userProfile.observe(this) {
+            Logger.d("userProfile it :: ${it}")
         }
     }
 
@@ -49,6 +53,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
                     .filter {  it?.length!! > 0 }
                     .onEach {
                         viewModel.searchUserInfoResult(owner = it.toString())
+//                        viewModel.searchUserProfile(owner = it.toString())
                     }
                     .launchIn(this@launch)
             }

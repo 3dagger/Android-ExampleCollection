@@ -16,6 +16,7 @@ abstract class BaseApiResponse {
 
     suspend fun <T> safeApiCall(apiCall: suspend () -> Response<T>): ApiResponse<T> {
         try {
+            ApiResponse.Loading(null)
             val response = apiCall()
             if(response.isSuccessful) {
                 val body = response.body()
@@ -23,9 +24,7 @@ abstract class BaseApiResponse {
                     return ApiResponse.Success(body)
                 }
             }
-
             return ApiResponse.Error("Fail")
-
         }catch (e: Exception) {
             return ApiResponse.Error("Fail")
 //            ApiResponse.Error(message = e.message, )

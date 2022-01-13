@@ -23,6 +23,10 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            isDebuggable = true
+            buildConfigField("Integer", "PORT", "8080")
+        }
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(

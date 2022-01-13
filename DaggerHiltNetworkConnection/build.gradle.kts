@@ -9,6 +9,7 @@ buildscript {
         classpath(kr.dagger.buildsrc.BuildPlugins.hilt)
         classpath(kr.dagger.buildsrc.BuildPlugins.android)
         classpath(kr.dagger.buildsrc.BuildPlugins.ksp)
+        classpath("com.android.tools.build:gradle:7.0.2")
     }
 }
 

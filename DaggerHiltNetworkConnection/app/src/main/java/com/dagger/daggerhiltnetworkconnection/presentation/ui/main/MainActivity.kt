@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.InputFilter
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
+import com.dagger.daggerhiltnetworkconnection.BuildConfig
 import com.dagger.daggerhiltnetworkconnection.R
 import com.dagger.daggerhiltnetworkconnection.presentation.base.BaseActivity
 import com.dagger.daggerhiltnetworkconnection.databinding.ActivityMainBinding

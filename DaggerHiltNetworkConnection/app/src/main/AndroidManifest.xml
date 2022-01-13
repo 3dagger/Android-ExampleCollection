@@ -14,10 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DaggerHiltNetworkConnection">
-        
-        <activity
-            android:name=".presentation.ui.user.info.UserInfoActivity"
-            android:launchMode="singleTop"/>
+
+        <activity android:name=".presentation.ui.main.detail.web.RepoActivity"/>
+        <activity android:name=".presentation.ui.main.detail.detail.DetailActivity"/>
         <activity
             android:name="com.dagger.daggerhiltnetworkconnection.presentation.ui.main.MainActivity"
             android:exported="true"

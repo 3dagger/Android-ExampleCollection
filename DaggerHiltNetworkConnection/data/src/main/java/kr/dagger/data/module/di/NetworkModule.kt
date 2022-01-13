@@ -48,7 +48,6 @@ object NetworkModule {
             .client(okHttpClient)
             .baseUrl(BASE_URL)
             .addConverterFactory(gsonConverterFactory)
-//            .addCallAdapterFactory(ResponseAdapterFactory())
 //            .addConverterFactory(MoshiConverterFactory.create())
             .build()
     }

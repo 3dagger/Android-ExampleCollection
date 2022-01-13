@@ -12,25 +12,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object DispatcherModule {
-//
-//    @Provides
-//    @Singleton
-//    fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
-
     @Provides
     @Singleton
     fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
-
-//    @Provides
-//    @Singleton
-//    fun provideMainDispatcher(): CoroutineDispatcher = Dispatchers.Main
-
-
-
-
-//    @Provides
-//    @Singleton
-//    fun provideIoDispatcher(): CoroutineDispatcher {
-//        return Dispatchers.IO
-//    }
 }

@@ -5,7 +5,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.NO_POSITION
+import com.dagger.daggerhiltnetworkconnection.Constants.INTENT_ARGUMENT_REPO_URL
 import com.dagger.daggerhiltnetworkconnection.databinding.ItemUserRepositoryBinding
+import com.dagger.daggerhiltnetworkconnection.presentation.extensions.openActivity
+import com.dagger.daggerhiltnetworkconnection.presentation.ui.main.detail.web.RepoActivity
 import com.orhanobut.logger.Logger
 import kr.dagger.domain.model.UserRepo
 
@@ -37,7 +40,11 @@ class RepositoryRecyclerViewAdapter : RecyclerView.Adapter<RepositoryRecyclerVie
                 val position = bindingAdapterPosition.takeIf { it != NO_POSITION } ?: return@setOnClickListener
                 val currentClickedAt = SystemClock.elapsedRealtime()
 
-                Logger.d("positon :: $position\ncurrentClickedAt :: $currentClickedAt")
+                binding.repoName.context.openActivity(RepoActivity::class.java) {
+                    putString(INTENT_ARGUMENT_REPO_URL, items[position].html_url)
+                }
+//                Logger.d("positon :: $position\ncurrentClickedAt :: $currentClickedAt")
+                Logger.d("position :: ${items[position].html_url}")
             }
 
         }

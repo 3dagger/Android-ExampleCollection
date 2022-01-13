@@ -25,15 +25,11 @@ abstract class ApiResponseHandler {
                     return ApiResponse.Success(body)
                 }
             }else {
-                Logger.d("response is not successful :: ${response.errorBody()?.string()}")
-//                ApiResponse.Error(errorBodyHandle(response.errorBody(), ))
+                ApiResponse.Error(response.errorBody()?.string()!!, response.errorBody())
             }
-//            val errorMessage = response.errorBody()!!.string()
-            return ApiResponse.Error("")
+            return ApiResponse.Error("Fail")
         }catch (e: Exception) {
             return ApiResponse.Error("Fail")
-//            ApiResponse.Error(message = e.message, )
-
         }
     }
 

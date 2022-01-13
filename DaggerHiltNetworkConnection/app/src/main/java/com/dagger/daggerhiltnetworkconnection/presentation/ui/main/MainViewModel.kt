@@ -13,28 +13,29 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(private val getUserProfileUseCase: GetUserProfileUseCase) : BaseViewModel() {
+    val isSearchEnabled = MutableLiveData<Boolean>()
+
     private val _userInfo: MutableLiveData<ApiResponse<UserProfile>> = MutableLiveData()
     val userInfo: LiveData<ApiResponse<UserProfile>>
         get() = _userInfo
+
+    init {
+        isSearchEnabled.value = false
+    }
 
     fun searchUserInfoResult(owner: String?) {
         viewModelScope.launch {
             getUserProfileUseCase.execute(owner)
                 .onStart {
-                    Logger.d("onStart")
                     handleLoading(true)
                 }
                 .catch {
-                    Logger.d("catch :: ${it.message}")
                     handleLoading(false)
                 }
                 .collect { values ->
                     handleLoading(false)
-                    Logger.d("value :: $values")
                     _userInfo.value = values
                 }
-
             }
         }
-
 }

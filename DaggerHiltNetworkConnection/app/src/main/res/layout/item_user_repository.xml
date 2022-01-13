@@ -12,6 +12,9 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusable="true"
+        android:clickable="true"
+        android:background="?attr/selectableItemBackground"
         android:padding="12dp">
 
         <TextView
@@ -20,16 +23,27 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="16sp"
-            android:text="@{repo.name}"
+            android:text="@{repo.name == null ? `null` : repo.name}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Clean Architecture"/>
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="@color/blue"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:text="@{repo.language == null ? `UnDefined` : repo.language}"
+            app:layout_constraintLeft_toRightOf="@id/repo_name"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
             android:id="@+id/repo_url"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@{repo.url}"
+            android:text="@{repo.html_url}"
             app:layout_constraintTop_toBottomOf="@id/repo_name"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="https://github.com/tkdgusl94/blog-source"/>

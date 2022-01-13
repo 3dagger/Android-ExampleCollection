@@ -1,27 +1,27 @@
 package com.dagger.daggerhiltnetworkconnection.presentation.ui.main
 
 
-import android.graphics.Color
 import android.os.Bundle
-import android.text.InputFilter
 import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.dagger.daggerhiltnetworkconnection.BuildConfig
+import com.dagger.daggerhiltnetworkconnection.Constants.INTENT_ARGUMENT_USER_ID
 import com.dagger.daggerhiltnetworkconnection.R
 import com.dagger.daggerhiltnetworkconnection.presentation.base.BaseActivity
 import com.dagger.daggerhiltnetworkconnection.databinding.ActivityMainBinding
 import com.dagger.daggerhiltnetworkconnection.presentation.extensions.openActivity
+import com.dagger.daggerhiltnetworkconnection.presentation.extensions.removeFocusAndHideKeyboard
+import com.dagger.daggerhiltnetworkconnection.presentation.extensions.snackbar
 import com.dagger.daggerhiltnetworkconnection.presentation.extensions.textChange
-import com.dagger.daggerhiltnetworkconnection.presentation.ui.user.info.UserInfoActivity
-import com.dagger.daggerhiltnetworkconnection.utils.Resource.Status.*
-import com.orhanobut.logger.Logger
+import com.dagger.daggerhiltnetworkconnection.presentation.ui.main.detail.detail.DetailActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kr.dagger.domain.state.ApiResponse
 
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
@@ -36,12 +36,25 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
 
     override fun onProcess() {
         initViewSetup()
+        subscribeObservers()
+    }
 
+    private fun subscribeObservers() {
         viewModel.userInfo.observe(this) {
-            Logger.d("userInfo it :: ${it.message}")
+            when(it) {
+                is ApiResponse.Success -> {
+                    viewModel.isSearchEnabled.value = true
+                }
+                is ApiResponse.Error -> {
+                    removeFocusAndHideKeyboard(this)
+                    viewModel.isSearchEnabled.value = false
+                    binding.topCl.snackbar(message = "존재하지 않는 사용자입니다.")
+                }
+                else -> {
+                    viewModel.isSearchEnabled.value = false
+                }
+            }
         }
-
-
     }
 
     private fun initViewSetup() {
@@ -49,19 +62,22 @@ class MainActivity : BaseActivity<ActivityMainBinding>(R.layout.activity_main) {
             binding.edtSearchText.apply {
                 textChange()
                     .debounce(500)
-                    .filter {  it?.length!! > 0 }
                     .onEach {
-                        viewModel.searchUserInfoResult(owner = it.toString())
-//                        viewModel.searchUserProfile(owner = it.toString())
+                        if(it?.length == 0) {
+                            binding.imgGithub.setImageResource(R.drawable.ic_img_github)
+                            viewModel.isSearchEnabled.value = false
+                        }else {
+                            viewModel.searchUserInfoResult(owner = it.toString())
+                        }
                     }
                     .launchIn(this@launch)
             }
         }
     }
 
-    fun moveUserInfoActivity() {
-        openActivity(UserInfoActivity::class.java) {
-//            putString()
+    fun moveUserDetailActivity() {
+        openActivity(DetailActivity::class.java) {
+            putString(INTENT_ARGUMENT_USER_ID, binding.edtSearchText.text.toString())
         }
     }
 }

@@ -1,0 +1,60 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    ext {
+        kotlin_version = '1.4.32'
+        cardview_version = '1.0.0'
+        viewpager2_version = '1.0.0'
+        retrofit_version = '2.9.0'
+        okhttp_version = '4.9.0'
+        livedata_version = '2.2.0'
+        databinding_version = '3.5.0'
+        koin_version = '2.2.2'
+        rxjava_version = '2.2.4'
+        rxandroid_version = '2.1.0'
+        rxkotlin_version = '2.4.0'
+        ted_permission_version = '2.2.3'
+        recyclerview_version = '1.1.0'
+        swiperefreshlayout_version = '1.1.0'
+        logger_version = '2.2.0'
+        double_back_press_version = '0.0.1'
+        firebase_bom_version = '26.5.0'
+        navermap_version = '3.11.0'
+        googlemap_version = '17.0.0'
+        kakao_package_version = '2.6.0'
+        naver_login_version = '4.2.6'
+        zxing_version = '4.2.0'
+        coroutine_version = '1.5.1'
+        glide_version = '4.11.0'
+        round_progressbar_version = '2.1.0'
+        jsoup_version = '1.14.1'
+        smooth_refresh_layout_version = '1.7.2.2'
+        mp_android_chart = 'v3.1.0'
+    }
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:4.1.1"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10"
+//        classpath 'com.google.gms:google-services:4.3.5'
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+        maven { url 'https://jitpack.io' }
+        maven { url "https://naver.jfrog.io/artifactory/maven/" }
+        maven { url 'https://devrepo.kakao.com/nexus/content/groups/public/' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

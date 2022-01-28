@@ -1,0 +1,2 @@
+rootProject.name = "CustomMarkerView"
+include ':app'

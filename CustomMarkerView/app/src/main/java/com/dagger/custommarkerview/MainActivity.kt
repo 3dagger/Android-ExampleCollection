@@ -23,6 +23,5 @@ class MainActivity : AppCompatActivity() {
             ?: MainFragment()
         transAction = fragmentManager.beginTransaction()
         transAction.replace(R.id.mainFrameLayout, mFragment).commitNow()
-
     }
 }

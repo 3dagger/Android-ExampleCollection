@@ -24,7 +24,7 @@ import com.orhanobut.logger.Logger
 import org.koin.android.ext.android.inject
 import kotlin.math.max
 
-data class AA(var type: MarkerType, var count: Int?, var max: Double?)
+data class MarkerStatus(var type: MarkerType, var count: Int?, var max: Double?, var isConnected: Boolean?)
 
 class MainFragment: Fragment(), OnMapReadyCallback {
     private val viewModel: MainViewModel by inject()
@@ -33,20 +33,13 @@ class MainFragment: Fragment(), OnMapReadyCallback {
     private val binding get() = _binding!!
     private var gpsTracker: GpsTracker? = null
 
-    private lateinit var markerArray                    : ArrayList<Marker>
+    private lateinit var newMarkerMap                   : ArrayList<Pair<MarkerStatus, Marker>>
     private lateinit var locationSource                 : FusedLocationSource
     private lateinit var nMap                           : NaverMap
 
-//    private lateinit var newMarkerMap                   : MutableMap<String, ArrayList<Marker>>
-    private lateinit var newMarkerMap                   : ArrayList<MutableMap<AA, Marker>>
-    private lateinit var newMarkerMap2                   : MutableMap<AA, Marker>
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         gpsTracker = GpsTracker(context = requireActivity())
-        markerArray = ArrayList()
-
         newMarkerMap = ArrayList()
-        newMarkerMap2 = mutableMapOf()
 
         _binding = FragmentMainBinding.inflate(layoutInflater, container, false)
 
@@ -67,127 +60,67 @@ class MainFragment: Fragment(), OnMapReadyCallback {
     private fun initView() {
         binding.btnReset.setOnClickListener {
             markerReset()
-            viewModel.getMockStationList()
         }
 
         binding.btnMarkerRemove.setOnClickListener {
-            removeMarer()
+            removeMarker()
         }
     }
 
     private fun subscribeObservers() {
         viewModel.stationData.observe(requireActivity()) { it ->
-            markerReset()
-            markerArray.clear()
-
-            it.embedded.stationList.forEachIndexed { index, entiretyStationList ->
-//                newMarkerMap2.put(AA(type = MarkerType.Small, count = entiretyStationList.socCount, max = entiretyStationList.maxSoc), Marker().apply {
-//                    position = LatLng(entiretyStationList.lat, entiretyStationList.lon)
-//                    map = nMap
-//                    width = Marker.SIZE_AUTO
-//                    height = Marker.SIZE_AUTO
-//                    icon = OverlayImage.fromView(CustomMarker(requireContext(), MarkerType.Small, defineMarker(socMax = entiretyStationList.maxSoc), entiretyStationList.socCount))
-//
-//                    setOnClickListener {
-//                        icon = OverlayImage.fromView(CustomMarker(requireContext(), MarkerType.Large, defineMarker(socMax = entiretyStationList.maxSoc), entiretyStationList.socCount))
-//
-////                        newMarkerMap[index].keys.map {
-////                            it.type = MarkerType.Large
-////                        }
-//                        true
-//                    }
-//                }
-
-                newMarkerMap.add(mutableMapOf(AA(type = MarkerType.Small, count = entiretyStationList.socCount, max = entiretyStationList.maxSoc) to Marker().apply {
-                    position = LatLng(entiretyStationList.lat, entiretyStationList.lon)
-                    map = nMap
-                    width = Marker.SIZE_AUTO
-                    height = Marker.SIZE_AUTO
-                    icon = OverlayImage.fromView(CustomMarker(requireContext(), MarkerType.Small, defineMarker(socMax = entiretyStationList.maxSoc), entiretyStationList.socCount))
-
-                    setOnClickListener {
-                        icon = OverlayImage.fromView(CustomMarker(requireContext(), MarkerType.Large, defineMarker(socMax = entiretyStationList.maxSoc), entiretyStationList.socCount))
-                        newMarkerMap[index].keys.map {
-                            it.type = MarkerType.Large
-                        }
-                        true
-                    }
-                }))
-
-
-
-
-
-//                newMarkerMap.put(key = AA(type = MarkerType.Small, count = entiretyStationList.socCount, max = entiretyStationList.maxSoc), value = Marker().apply {
-//                    position = LatLng(entiretyStationList.lat, entiretyStationList.lon)
-//                    map = nMap
-//                    width = Marker.SIZE_AUTO
-//                    height = Marker.SIZE_AUTO
-//                    icon = OverlayImage.fromView(CustomMarker(requireContext(), MarkerType.Small, defineMarker(socMax = entiretyStationList.maxSoc), entiretyStationList.socCount))
-//
-//                    setOnClickListener {
-//                        icon = OverlayImage.fromView(CustomMarker(requireContext(), MarkerType.Large, defineMarker(socMax = entiretyStationList.maxSoc), entiretyStationList.socCount))
-//                        newMarkerMap.keys[index]
-////                                newMarkerMap.keys.map { it.type == MarkerType.Large }
-//                        true
-//                    }
-//                })
+            newMarkerMap.clear()
+            it.embedded.stationList.forEachIndexed { index, station ->
+                Logger.d("index :: $index")
+                drawMarker(idx = index, nMap = nMap, latlng = LatLng(station.lat, station.lon), socCount = station.socCount, socMax = station.maxSoc, isConnection = station.connYn)
             }
-
-//            it.embedded.stationList.forEach {
-//                drawMarker(nMap = nMap, latlng = LatLng(it.lat, it.lon), socCount = it.socCount, socMax = it.maxSoc, isConnection = it.connYn)
-//            }
-
-            Logger.d("newMarkermap2 :: ${newMarkerMap2}" )
         }
     }
 
     private fun onMapClickEvent() {
         nMap.setOnMapClickListener { _, _ ->
-            Logger.d("newMarkerMap mapClickEvent :: ${newMarkerMap}")
-//            Logger.d("res :: ${newMarkerMap2.filter { it.key.type == MarkerType.Large }}")
             newMarkerMap.forEachIndexed { index, mutableMap ->
-                val b = mutableMap.keys.filterIndexed { index, aa ->  aa.type == MarkerType.Large }
-
-//                mutableMap.values.
-
+                    if(mutableMap.first.type == MarkerType.Large) {
+                        mutableMap.second.icon = OverlayImage.fromView(CustomMarker(requireContext(), MarkerType.Small, mutableMap.first.count, mutableMap.first.max))
+                    }
             }
         }
     }
 
-    // 마커가 확대되어있는 상황에 맵 클릭시 작은 마커로 변환 되어야함
-    // icon만 갈아끼워주면 됨
-    private fun drawMarker(nMap: NaverMap, latlng: LatLng, socCount: Int?, socMax: Double?, isConnection: Boolean) {
-//        newMarkerMap.put(key = AA(type = MarkerType.Small, count = socCount, max = socMax), value = Marker().apply {
-//                            position = latlng
-//                            map = nMap
-//                            width = Marker.SIZE_AUTO
-//                            height = Marker.SIZE_AUTO
-//                            icon = OverlayImage.fromView(CustomMarker(requireContext(), MarkerType.Small, defineMarker(socMax = socMax), socCount))
-//
-//                            setOnClickListener {
-//                                icon = OverlayImage.fromView(CustomMarker(requireContext(), MarkerType.Large, defineMarker(socMax = socMax), socCount))
-//                                newMarkerMap.keys.map { Logger.d("click it :: $it") }
-//                                true
-//                            }
-//                        })
-    }
-
-    private fun defineMarker(socMax: Double?) : Int {
-        return when {
-            socMax!! >= 80.0    -> R.drawable.s_station_pin_icon_g
-            socMax   >= 60.0    -> R.drawable.s_station_pin_icon_y
-            else                -> R.drawable.s_station_pin_icon_r
-        }
+    private fun drawMarker(idx: Int, nMap: NaverMap, latlng: LatLng, socCount: Int?, socMax: Double?, isConnection: Boolean) {
+        newMarkerMap.add(
+            MarkerStatus(type = MarkerType.Small, count = socCount, max = socMax, isConnected = isConnection) to Marker().apply {
+            position = latlng
+            map = nMap
+            width = Marker.SIZE_AUTO
+            height = Marker.SIZE_AUTO
+            icon = when(isConnection) {
+                true    -> OverlayImage.fromView(CustomMarker(context = requireContext(), type = MarkerType.Small, countSoc = socCount, maxSoc = socMax))
+                false   -> OverlayImage.fromView(CustomMarker(context = requireContext(), type = MarkerType.Error, countSoc = socCount, maxSoc = socMax))
+            }
+            setOnClickListener {
+                if(isConnection) {
+                    newMarkerMap.forEach { mutableMap ->
+                        if (mutableMap.first.type == MarkerType.Large) {
+                            mutableMap.second.icon = OverlayImage.fromView(CustomMarker(requireContext(), MarkerType.Small, mutableMap.first.count, mutableMap.first.max))
+                        }
+                    }
+                    newMarkerMap[idx].first.type = MarkerType.Large
+                    icon = OverlayImage.fromView(CustomMarker(requireContext(), MarkerType.Large, socCount, socMax))
+                }
+                true
+            }
+        })
     }
 
 
     private fun markerReset() {
-        markerArray.forEach { marker ->  marker.map = null }
+        newMarkerMap.forEach { (_, b) -> b.map = null }
+        viewModel.getMockStationList()
     }
 
-    private fun removeMarer() {
-        markerArray.forEach { marker ->  marker.map = null }
+    private fun removeMarker() {
+        newMarkerMap.forEach { (_, b) -> b.map = null }
     }
 
     override fun onDestroy() {
@@ -200,7 +133,7 @@ class MainFragment: Fragment(), OnMapReadyCallback {
         nMap.locationSource = locationSource
 
         nMap.apply {
-            cameraPosition = CameraPosition(LatLng(gpsTracker!!.getLatitude(), gpsTracker!!.getLongitude()), 14.0, 0.0, 0.0)
+            cameraPosition = CameraPosition(LatLng(gpsTracker!!.getLatitude(), gpsTracker!!.getLongitude()), 8.0, 0.0, 0.0)
             uiSettings.apply {
                 isLocationButtonEnabled = false
                 isCompassEnabled = false
@@ -216,7 +149,7 @@ class MainFragment: Fragment(), OnMapReadyCallback {
                 setLogoMargin(20, 100, 200, 20)
             }
             mapType = NaverMap.MapType.Navi
-            locationTrackingMode = LocationTrackingMode.NoFollow
+            locationTrackingMode = LocationTrackingMode.Follow
         }
 
         onMapClickEvent()

@@ -13,12 +13,11 @@ import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 
-//class CustomMarker @JvmOverloads constructor(context: Context, private val type: String, countSoc: Int? = null, maxSoc: Double? = null, isConnection: Boolean): LinearLayout(context){
-class CustomMarker @JvmOverloads constructor(context: Context, private val type: MarkerType, private val resource: Int, countSoc: Int? = null): LinearLayout(context){
+class CustomMarker @JvmOverloads constructor(context: Context, private val type: MarkerType, countSoc: Int? = null, maxSoc: Double? = null): LinearLayout(context){
 
-    private var marker: ImageView
-    private var tvSmallCount: TextView
-    private var tvLargeCount: TextView
+    private var marker          : ImageView
+    private var tvSmallCount    : TextView
+    private var tvLargeCount    : TextView
 
     init {
         val v = View.inflate(context, R.layout.custom_marker_small, this)
@@ -26,34 +25,25 @@ class CustomMarker @JvmOverloads constructor(context: Context, private val type:
         tvSmallCount = v.findViewById(R.id.tvBatterySmallCount)
         tvLargeCount = v.findViewById(R.id.tvBatteryLargeCount)
 
-        marker.setImageResource(resource)
 
-
-//        if(!isConnection) {
-//            setDrawUnavailableMarker()
-//            setDrawUnavailableCount()
-//        }else {
-//            when(type) {
-//                "small" -> {
-//                    setDrawSmallMarker(maxSoc = maxSoc)
-//                    setDrawSmallCount(countSoc = countSoc)
-//                }
-//                "large" -> {
-//                    setDrawLargeMarker(maxSoc = maxSoc)
-//                    setDrawLargeCount(countSoc = countSoc)
-//                }
-//                else -> {
-//
-//                }
-//            }
-//        }
-//
-//        nowType = type
+        when(type) {
+            MarkerType.Small -> {
+                setDrawSmallMarker(maxSoc = maxSoc)
+                setDrawSmallCount(countSoc = countSoc)
+            }
+            MarkerType.Large -> {
+                setDrawLargeMarker(maxSoc = maxSoc)
+                setDrawLargeCount(countSoc = countSoc)
+            }
+            MarkerType.Error -> {
+                setDrawUnavailableMarker()
+                setDrawUnavailableCount()
+            }
+        }
     }
 
     private fun setDrawUnavailableMarker() {
-//        marker.setImageResource(R.drawable.s_station_pin_icon_error)
-        marker.setImageResource(resource)
+        marker.setImageResource(R.drawable.s_station_pin_icon_error)
     }
 
     private fun setDrawUnavailableCount() {
@@ -71,10 +61,12 @@ class CustomMarker @JvmOverloads constructor(context: Context, private val type:
     }
 
     private fun setDrawSmallMarker(maxSoc: Double?) {
-        when {
-            maxSoc!! >= 80.0    -> marker.setImageResource(R.drawable.s_station_pin_icon_g)
-            maxSoc   >= 60.0    -> marker.setImageResource(R.drawable.s_station_pin_icon_y)
-            else                -> marker.setImageResource(R.drawable.s_station_pin_icon_r)
+        maxSoc?.let {
+            when {
+                maxSoc  >= 80.0 -> marker.setImageResource(R.drawable.s_station_pin_icon_g)
+                maxSoc  >= 60.0 -> marker.setImageResource(R.drawable.s_station_pin_icon_y)
+                else            -> marker.setImageResource(R.drawable.s_station_pin_icon_r)
+            }
         }
         onRefresh()
     }

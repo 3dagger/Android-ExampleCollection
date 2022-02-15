@@ -3,21 +3,152 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="activity"
+            type="com.dagger.realtimechart.MainActivity" />
+
+        <variable
+            name="vm"
+            type="com.dagger.realtimechart.MainViewModel" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:overScrollMode="never">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hello World!"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <Button
+                android:id="@+id/btnRefresh"
+                android:layout_width="0dp"
+                android:layout_height="100dp"
+                android:backgroundTint="@color/black"
+                android:onClick="@{() -> activity.refresh()}"
+                android:text="REFRESH"
+                android:textStyle="bold"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/lineChartCv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="3dp"
+                app:layout_constraintDimensionRatio="320:143"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btnRefresh"
+                >
+
+                <com.dagger.realtimechart.CustomLineChart
+                    android:id="@+id/lineChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+<!--                <com.github.mikephil.charting.charts.LineChart-->
+<!--                    android:id="@+id/lineChart"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent" />-->
+
+            </androidx.cardview.widget.CardView>
+
+            <Button
+                android:id="@+id/btnPrevious"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="5dp"
+                android:backgroundTint="@color/black"
+                android:onClick="@{() -> activity.moveChartPrevious()}"
+                android:text="PREVIOUS"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/btnNext"
+                app:layout_constraintTop_toBottomOf="@id/lineChartCv" />
+
+            <Button
+                android:id="@+id/btnNext"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="5dp"
+                android:backgroundTint="@color/black"
+                android:onClick="@{() -> activity.moveChartNext()}"
+                android:text="NEXT"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toRightOf="@id/btnPrevious"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lineChartCv" />
+
+            <Button
+                android:id="@+id/btnTop"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:backgroundTint="@color/black"
+                android:text="TOP 1"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@+id/btnNext"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                 />
+
+            <Button
+                android:id="@+id/btnTop2"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/black"
+                android:text="TOP 2"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/btnTop"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                />
+
+            <Button
+                android:id="@+id/btnTop3"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:backgroundTint="@color/purple_200"
+                android:text="TOP 3"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/btnTop2"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                />
+
+            <Button
+                android:id="@+id/btnTop4"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:backgroundTint="@color/design_default_color_primary_variant"
+                android:text="TOP 4"
+                android:textStyle="bold"
+                app:layout_constraintTop_toBottomOf="@id/btnTop3"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                />
 
 
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </layout>

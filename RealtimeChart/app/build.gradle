@@ -6,6 +6,7 @@ plugins {
 
 android {
     compileSdk 32
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
         applicationId "com.dagger.realtimechart"
@@ -63,7 +64,6 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-scalars:$retrofit_version"
 
     // RetroFit2 - RxJava Adapter : https://github.com/square/retrofit/blob/master/CHANGELOG.md#version-290-2020-05-20
-//    implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
     implementation "com.squareup.retrofit2:adapter-rxjava3:2.9.0"
 
     // OkHttp3 : https://square.github.io/okhttp/
@@ -87,9 +87,6 @@ dependencies {
     implementation "org.koin:koin-androidx-ext:$koin_version" // Koin AndroidX Experimental features
 
     // RxJava2 : https://github.com/ReactiveX/RxKotlin
-//    implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
-//    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
-//    implementation "io.reactivex.rxjava2:rxkotlin:$rxkotlin_version"
     implementation "io.reactivex.rxjava3:rxjava:3.1.3"
     implementation "io.reactivex.rxjava3:rxandroid:3.0.0"
     implementation "io.reactivex.rxjava3:rxkotlin:3.0.1"
@@ -98,8 +95,6 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
 
-    // TedPermission : https://github.com/ParkSangGwon/TedPermission
-    implementation "gun0912.ted:tedpermission:$ted_permission_version"
 
     // RecyclerView : https://developer.android.com/jetpack/androidx/releases/recyclerview?hl=ko
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
@@ -110,69 +105,22 @@ dependencies {
     // Logger : https://github.com/orhanobut/logger
     implementation "com.orhanobut:logger:$logger_version"
 
-    // Double Back Press : https://github.com/kaushikthedeveloper/DoubleBackPress
-    implementation "com.github.kaushikthedeveloper:double-back-press:$double_back_press_version"
-
-//    // Firebase BoM : https://github.com/firebase/quickstart-android/blob/master/database/app/build.gradle
-//    implementation platform("com.google.firebase:firebase-bom:$firebase_bom_version")
-//    // Add the dependency for the Firebase SDK for Google Analytics
-//    // When using the BoM, don't specify versions in Firebase dependencies
-//    // Recommended: Add the Firebase SDK for Google Analytics.
-//    implementation 'com.google.firebase:firebase-analytics-ktx'
-//    // Add the Firebase Crashlytics SDK.
-//    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-//    // Add the Firebase Messaging SDK.
-//    implementation 'com.google.firebase:firebase-messaging-ktx'
-//    // Add the Firebase Remote Config.
-//    implementation 'com.google.firebase:firebase-config-ktx'
-//    // Firebase Realtime Database (Kotlin) - https://github.com/firebase/quickstart-android/blob/master/database/app/build.gradle
-//    implementation 'com.google.firebase:firebase-database-ktx'
-
-    // Easy Preferences : https://github.com/Pixplicity/EasyPrefs
-    implementation 'com.pixplicity.easyprefs:library:1.9.0'
 
     // GoogleMap : https://developers.google.com/maps/documentation/android-sdk/releases
     implementation "com.google.android.gms:play-services-maps:$googlemap_version"
     implementation "com.google.android.gms:play-services-location:$googlemap_version"
 
-    // Kakao Login, Tolk, Link, Navi : https://developers.kakao.com/docs/latest/ko/kakaologin/android-v1#before-you-begin
-    implementation "com.kakao.sdk:v2-user:$kakao_package_version"
-    implementation "com.kakao.sdk:v2-talk:$kakao_package_version"
-    implementation "com.kakao.sdk:v2-link:$kakao_package_version"
-    implementation "com.kakao.sdk:v2-navi:$kakao_package_version"
 
-    // Naver Login : https://developers.naver.com/docs/login/devguide/devguide.md
-    implementation "com.naver.nid:naveridlogin-android-sdk:$naver_login_version"
 
-    // Naver Map : https://auth.ncloud.com/login
-    implementation "com.naver.maps:map-sdk:$navermap_version"
-
-    // Zxing : https://github.com/journeyapps/zxing-android-embedded
-    implementation "com.journeyapps:zxing-android-embedded:$zxing_version"
-
-    // commons-codec : https://commons.apache.org/proper/commons-codec/dependency-info.html
-    implementation group: 'commons-codec', name: 'commons-codec', version: '1.14'
 
     // Glide : https://github.com/bumptech/glide
     implementation "com.github.bumptech.glide:glide:$glide_version"
     annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
     kapt "com.github.bumptech.glide:compiler:$glide_version"
 
-    // RoundedProgressBar : https://github.com/MackHartley/RoundedProgressBar
-    implementation "com.github.MackHartley:RoundedProgressBar:$round_progressbar_version"
-
-    // Jsoup : https://jsoup.org/
-    implementation "org.jsoup:jsoup:$jsoup_version"
-
-    // SmoothRefreshLayout : https://github.com/dkzwm/SmoothRefreshLayout
-    implementation "com.github.dkzwm:srl-core:$smooth_refresh_layout_version"
-    implementation "com.github.dkzwm:srl-ext-classics:$smooth_refresh_layout_version"
-    implementation "com.github.dkzwm:srl-ext-material:$smooth_refresh_layout_version"
-    implementation "com.github.dkzwm:srl-ext-dynamic-rebound:$smooth_refresh_layout_version"
-    implementation "com.github.dkzwm:srl-ext-horizontal:$smooth_refresh_layout_version"
-    implementation "com.github.dkzwm:srl-ext-two-level:$smooth_refresh_layout_version"
-    implementation "com.github.dkzwm:srl-ext-util:$smooth_refresh_layout_version"
 
     // MpAndroidChart : https://github.com/PhilJay/MPAndroidChart
     implementation "com.github.PhilJay:MPAndroidChart:$mp_android_chart"
+
+    implementation 'androidx.work:work-runtime-ktx:2.7.0'
 }

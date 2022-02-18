@@ -19,6 +19,8 @@ data class RentReport(
     @SerializedName("socReport") var socReport: Map<String, Int>,
     @SerializedName("countReport") var countReport: Map<String, Int>,
     @SerializedName("mobilities") var mobilities: List<Mobilities>?,
+    @SerializedName("socReportArray") var socReportArray: List<SocReportArray>?,
+    @SerializedName("countReportArray") var countReportArray: List<CountReportArray>?,
     @SerializedName("time") var time: String?,
     @SerializedName("username") var userName: String?,
     @SerializedName("mileage") var mileage: Int
@@ -33,6 +35,16 @@ data class RatePlan(
     @SerializedName("userName") var userName: String?,
     @SerializedName("delYn") var delYn: String?,
     @SerializedName("cancelYn") var cancelYn: String?
+)
+
+data class SocReportArray(
+    @SerializedName("date") val date: String,
+    @SerializedName("value") val value: Int
+)
+
+data class CountReportArray(
+    @SerializedName("date") val date: String,
+    @SerializedName("value") val value: Int
 )
 
 data class Mobilities(

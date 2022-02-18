@@ -12,6 +12,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -23,24 +24,21 @@ import com.orhanobut.logger.Logger
 import java.util.*
 import kotlin.math.roundToInt
 
-class CustomLineChart @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : FrameLayout(context, attrs, defStyleAttr),
-    OnChartGestureListener {
+class CustomLineChart @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : FrameLayout(context, attrs, defStyleAttr), OnChartGestureListener {
     private val lineChart = LineChart(context)
     private var listener: CustomLineChartMoreLoadListener? = null
+    private val utility = Utility(context)
+
+    private var saveCount = 0F
 
     init {
-        val params = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
-        )
+        val params = LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
         lineChart.layoutParams = params
         this.addView(lineChart)
-
-
         setupChart()
     }
 
-    fun setOnListener(listener: CustomLineChartMoreLoadListener) {
+    fun setOnMorePageListener(listener: CustomLineChartMoreLoadListener) {
         this.listener = listener
     }
 
@@ -55,8 +53,15 @@ class CustomLineChart @JvmOverloads constructor(context: Context, attrs: Attribu
             setPinchZoom(false)
             setDrawGridBackground(false)
             setScaleEnabled(false)
+//            when(utility.getDeviceWidthDpSize(activity) <= DeviceWidthDpType.Type320Over.value) {
+//                true -> setExtraOffsets(35f,35f,35f,20f)
+//                false -> setExtraOffsets(40f,35f,40f,20f)
+//            }
+            when(utility.getDeviceWidthDpSize2() <= 320) {
+                true -> setExtraOffsets(35f,35f,35f,20f)
+                false -> setExtraOffsets(40f,35f,40f,20f)
+            }
             setExtraOffsets(40f,35f,40f,20f)
-            setBackgroundColor(Color.LTGRAY)
 
             axisLeft.apply {
                 setDrawLabels(false)
@@ -65,6 +70,9 @@ class CustomLineChart @JvmOverloads constructor(context: Context, attrs: Attribu
                 setDrawBorders(false)
             }
             axisRight.isEnabled = false
+
+            setXAxisRenderer(CustomXAxisRenderer(viewPortHandler, xAxis, getTransformer(YAxis.AxisDependency.LEFT), context))
+            renderer = CustomLineChartRenderer(context, this, animator, viewPortHandler)
 
             xAxis.run {
                 position = XAxis.XAxisPosition.BOTTOM
@@ -77,24 +85,54 @@ class CustomLineChart @JvmOverloads constructor(context: Context, attrs: Attribu
                 textColor = Color.parseColor("#adadad")
                 textSize = 10f
                 typeface = ResourcesCompat.getFont(context, R.font.notosanskrmedium)
-//                valueFormatter = XAxisFormatter(viewModel.xAxisValue)
-//                valueFormatter = XAxisFormatter()
             }
+
+            animateY(300)
         }
     }
 
     fun setData(data: LinkedList<Entry>, xValue: LinkedList<String>) {
         val firstData = createLineChart(data)
+        val linkedList = LinkedList<Entry>()
+        linkedList.add(data.last)
+        val b = createLastValueLineChart(linkedList)
 
         val dataSetArray: ArrayList<ILineDataSet> = ArrayList()
         dataSetArray.add(firstData)
+        dataSetArray.add(b)
 
         lineChart.xAxis.valueFormatter = XAxisFormatter(xValue)
         lineChart.run {
-            clear()
             this.data = LineData(dataSetArray)
+            Logger.d("this.data.yMax :: ${this.data.yMax}\nthis.data.yMin :: ${this.data.yMin}\nthis.data.xMax :: ${this.data.xMax}\nthis.data.xMin :: ${this.data.xMin}")
+            when {
+                this.data.yMax == this.data.yMin        ->  this.axisLeft.axisMinimum = this.data.yMin - 0.05F
+                this.data.yMax - this.data.yMin < 10    ->  this.axisLeft.axisMinimum = this.data.yMin - 0.1F
+                this.data.yMax - this.data.yMin < 100   ->  this.axisLeft.axisMinimum = this.data.yMin - 1F
+                else ->  this.axisLeft.axisMinimum = this.data.yMin - 10F
+            }
+
             this.setVisibleXRangeMaximum(6F)
             invalidate()
+        }
+    }
+
+    fun moveEndOfTheChart() {
+        saveCount = 0F
+        saveCount = lineChart.data?.entryCount!!.toFloat()
+        lineChart.run {
+            moveViewToX(data?.entryCount!!.toFloat())
+        }
+    }
+
+    fun stayTheChart() {
+//        Handler(Looper.getMainLooper()).postDelayed({
+//            Toast.makeText(context, "success", Toast.LENGTH_SHORT).show()
+//            lineChart.moveViewToX(lineChart.data?.entryCount!!.toFloat())
+//        }, 3000)
+
+        lineChart.run {
+            moveViewToX(data?.entryCount!!.toFloat())
         }
     }
 
@@ -118,31 +156,54 @@ class CustomLineChart @JvmOverloads constructor(context: Context, attrs: Attribu
         return lineDataSet
     }
 
+//    private fun iCreateLineChart(data: LinkedList<Entry>): CustomLineDataSet {
+//        val lineDataSet = CustomLineDataSet(context, data, "").apply {
+//            color = Color.parseColor("#0091c1")
+//            setCircleColor(Color.parseColor("#0091c1"))
+//            circleHoleColor = Color.parseColor("#FFFFFF")
+//            circleRadius = 4f
+//            circleHoleRadius = 2f
+//            lineWidth = 2f
+//            fillDrawable = ContextCompat.getDrawable(context, R.drawable.line_chart_gradient)
+//            valueTextSize = 10f
+//            valueTextColor = Color.parseColor("#3c3c3c")
+//            valueTypeface = ResourcesCompat.getFont(context, R.font.notosanskrbold)
+//            valueFormatter = YAxisFormatter()
+//            setDrawFilled(true)
+//            setDrawValues(true)
+//        }
+//        return lineDataSet
+//    }
 
-    inner class XAxisFormatter(private val xAxisArray: LinkedList<String>) : ValueFormatter() {
-        override fun getAxisLabel(value: Float, axis: AxisBase?): String {
-            return xAxisArray.getOrNull(value.toInt()) ?: value.toString()
+    private fun createLastValueLineChart(data: LinkedList<Entry>): LineDataSet {
+        val lineDataSet = LineDataSet(data, "").apply {
+            color = Color.parseColor("#0091c1")
+            setCircleColor(Color.parseColor("#0091c1"))
+            circleHoleColor = Color.parseColor("#FFFFFF")
+            circleRadius = 6f
+            circleHoleRadius = 3.5f
+            valueTextSize = 0f
+            valueTextColor = Color.parseColor("#3c3c3c")
+            valueTypeface = ResourcesCompat.getFont(context, R.font.notosanskrbold)
+            valueFormatter = YAxisFormatter()
+            setDrawFilled(false)
+            setDrawValues(false)
         }
+
+        return lineDataSet
     }
 
-    inner class YAxisFormatter : ValueFormatter() {
-        override fun getFormattedValue(value: Float): String  {
-            return value.roundToInt().toString()
+    override fun onChartGestureEnd(me: MotionEvent?, lastPerformedGesture: ChartTouchListener.ChartGesture?) {
+        if(lineChart.visibleXRange.toInt() == lineChart.highestVisibleX.toInt()) {
+            listener?.moreLoad()
         }
     }
 
     override fun onChartGestureStart(me: MotionEvent?, lastPerformedGesture: ChartTouchListener.ChartGesture?) {
     }
 
-    override fun onChartGestureEnd(me: MotionEvent?, lastPerformedGesture: ChartTouchListener.ChartGesture?) {
-        if(lineChart.visibleXRange.toInt() == lineChart.highestVisibleX.toInt()) {
-            Logger.d("end point called")
-//            viewModel.fetchData(page = page, period = "day", isFirst = false)
-            listener?.moreLoad()
-        }
-    }
-
     override fun onChartLongPressed(me: MotionEvent?) {
+
     }
 
     override fun onChartDoubleTapped(me: MotionEvent?) {
@@ -158,5 +219,17 @@ class CustomLineChart @JvmOverloads constructor(context: Context, attrs: Attribu
     }
 
     override fun onChartTranslate(me: MotionEvent?, dX: Float, dY: Float) {
+    }
+
+    inner class XAxisFormatter(private val xAxisArray: LinkedList<String>) : ValueFormatter() {
+        override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+            return xAxisArray.getOrNull(value.toInt()) ?: value.toString()
+        }
+    }
+
+    inner class YAxisFormatter : ValueFormatter() {
+        override fun getFormattedValue(value: Float): String  {
+            return value.roundToInt().toString()
+        }
     }
 }

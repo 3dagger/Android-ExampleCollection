@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.dagger.realtimechart.base.BaseViewModel
 import com.github.mikephil.charting.data.Entry
-import com.orhanobut.logger.Logger
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -15,12 +14,6 @@ class MainViewModel(val remoteService: RemoteService) : BaseViewModel<MainNaviga
     val mockData : LiveData<FakeModel>
         get() = _mockData
 
-//    private val _batteryUsageEntryData = MutableLiveData<ArrayList<Entry>>()
-//    val batteryUsageEntryData : LiveData<ArrayList<Entry>>
-//        get() = _batteryUsageEntryData
-//
-//    var xAxisValue                      = ArrayList<String>()
-
     private val _batteryUsageEntryData = MutableLiveData<LinkedList<Entry>>()
     val batteryUsageEntryData : LiveData<LinkedList<Entry>>
         get() = _batteryUsageEntryData
@@ -29,9 +22,13 @@ class MainViewModel(val remoteService: RemoteService) : BaseViewModel<MainNaviga
     val moveLast : LiveData<Boolean>
         get() = _moveLast
 
+    private val _isEmptyData = MutableLiveData<Boolean>()
+    val isEmptyData : LiveData<Boolean>
+        get() = _isEmptyData
+
+    var lastEntryData                   = ArrayList<Entry>()
     var xAxisValue                      = LinkedList<String>()
     var idx = 0
-
 
     private val entryData = LinkedList<Entry>()
 
@@ -41,7 +38,6 @@ class MainViewModel(val remoteService: RemoteService) : BaseViewModel<MainNaviga
     }
 
     fun fetchData(period: String, page: Int, isFirst: Boolean) {
-//        addDisposable(remoteService.apiGetDailyRental(period = period, token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyTWdwbVozTzRocTVmOTMtMGJ5YUxiOTNHVkpYOVVKek80UjFtRElpTk9vIiwicm9sZXMiOiJDTElFTlQiLCJleHAiOjE2NzYwMTI4MjksImlzcyI6Ik5hbnVBUEkiLCJhdWQiOiJodHRwczovL2FwaS1uYW51LmFpbXMtcm5kLmNvbSJ9.U0M-SIPC8gDJdMu8z6zTk5mYRS8EnHEVvCI_ZQtVxw8")
         addDisposable(remoteService.apiGetDailyRental(page = page, period = period,token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyTWdwbVozTzRocTVmOTMtMGJ5YUxiOTNHVkpYOVVKek80UjFtRElpTk9vIiwicm9sZXMiOiJDTElFTlQiLCJleHAiOjE2NzYzNDAwNTcsImlzcyI6Ik5hbnVBUEkiLCJhdWQiOiJodHRwczovL2FwaS1uYW51LmFpbXMtcm5kLmNvbSJ9.py3Gd4-E_WSsq9l8mMWZzzrhq5RNfnT4Q7LCi_Zz63c")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -49,56 +45,65 @@ class MainViewModel(val remoteService: RemoteService) : BaseViewModel<MainNaviga
             .doOnTerminate { dismissProgress() }
             .subscribeBy(
                 onSuccess = {
-//                    _mockData.value = it.body()
-                    it.body()?.let { if(isFirst) processingInitData(period, it) else processingAddData(period, it)}
-                    Logger.d("it.body :: ${it.body()}")
+                    it.body()?.let { data ->
+                        when (data.rentReport.socReportArray.isNullOrEmpty()) {
+                            true -> setEmptyData(isEmpty = true)
+                            false -> if (isFirst) processingInitData(period, data) else processingAddData(period, data)
+                        }
+                    }
+//                    Logger.d("it.body :: ${it.body()}")
                 },
                 onError = {}
             )
         )
     }
 
-//    fun setMoveLast(isLast: Boolean) {
-//        _moveLast.value = isLast
-//    }
+    fun setMoveLast(isLast: Boolean) {
+        _moveLast.value = isLast
+    }
 
-
+    fun setEmptyData(isEmpty: Boolean) {
+        _isEmptyData.value = isEmpty
+    }
 
     fun processingInitData(period: String, fakeData: FakeModel) {
         idx = 0
         entryData.clear()
+        lastEntryData.clear()
         xAxisValue.clear()
 
-        fakeData.rentReport.socReport.forEach { (key, value) ->
+        fakeData.rentReport.socReportArray?.forEach { (date, value) ->
             entryData.add(Entry(idx.toFloat(), value.toFloat()))
-            xAxisValue.add(if(period == "day") convertDailyFormant(inputDate = key) else convertMonthlyFormat(inputDate = key))
+            xAxisValue.add(if(period == "day") date else "${date}일")
             idx++
         }
 
+        lastEntryData.add(entryData[entryData.lastIndex])
         _batteryUsageEntryData.value = entryData
 
 //        _moveLast.value = true
-//        setMoveLast(true)
+        setMoveLast(true)
     }
 
     fun processingAddData(period: String, fakeData: FakeModel) {
         idx = 0
         var previousIdx = fakeData.rentReport.socReport.size.toFloat()
-
         entryData.forEach {
             it.x = previousIdx
             previousIdx++
         }
 
-        fakeData.rentReport.socReport.forEach { (key, value) ->  
+        fakeData.rentReport.socReportArray?.forEach { (date, value) ->
             entryData.add(idx, Entry(idx.toFloat(), value.toFloat()))
-//            xAxisValue.add(if(period == "day") convertDailyFormant(inputDate = key) else convertMonthlyFormat(inputDate = key))
-            xAxisValue.add(idx, if(period == "day") convertDailyFormant(inputDate = key) else convertMonthlyFormat(inputDate = key))
+            xAxisValue.add(idx, if(period == "day") date else "${date}일")
             idx++
         }
 
         _batteryUsageEntryData.value = entryData
+        setMoveLast(false)
     }
+
+
     
 
     override fun disposableClear() {

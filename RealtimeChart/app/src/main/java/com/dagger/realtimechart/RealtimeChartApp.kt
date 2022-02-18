@@ -2,6 +2,7 @@ package com.dagger.realtimechart
 
 import android.app.Application
 import com.dagger.realtimechart.di.apiModules
+import com.dagger.realtimechart.di.appModules
 import com.dagger.realtimechart.di.networkModules
 import com.dagger.realtimechart.di.viewModelModules
 import com.orhanobut.logger.AndroidLogAdapter
@@ -17,12 +18,12 @@ class RealtimeChartApp : Application() {
 
         startKoin {
             androidContext(this@RealtimeChartApp)
-            modules(listOf(apiModules, networkModules, viewModelModules))
+            modules(listOf(apiModules, networkModules, viewModelModules, appModules))
         }
         // init Logger
         val formatStrategy = PrettyFormatStrategy.newBuilder()
-            .showThreadInfo(true) // 쓰레드 보여줄 것인지
-            .methodCount(2)        // 몇라인까지 출력할지, 기본값 2
+            .showThreadInfo(false) // 쓰레드 보여줄 것인지
+            .methodCount(1)        // 몇라인까지 출력할지, 기본값 2
             .methodOffset(5)       // 메서드 오프셋, 기본값 5
             .tag("leeam")      // 글로벌 태그
             .build()

@@ -36,6 +36,7 @@ class CustomLineChart @JvmOverloads constructor(context: Context, attrs: Attribu
         lineChart.layoutParams = params
         this.addView(lineChart)
         setupChart()
+        Logger.d("in ?")
     }
 
     fun setOnMorePageListener(listener: CustomLineChartMoreLoadListener) {
@@ -104,17 +105,27 @@ class CustomLineChart @JvmOverloads constructor(context: Context, attrs: Attribu
         lineChart.xAxis.valueFormatter = XAxisFormatter(xValue)
         lineChart.run {
             this.data = LineData(dataSetArray)
-            Logger.d("this.data.yMax :: ${this.data.yMax}\nthis.data.yMin :: ${this.data.yMin}\nthis.data.xMax :: ${this.data.xMax}\nthis.data.xMin :: ${this.data.xMin}")
+//            Logger.d("this.data.yMax :: ${this.data.yMax}\nthis.data.yMin :: ${this.data.yMin}\nthis.data.xMax :: ${this.data.xMax}\nthis.data.xMin :: ${this.data.xMin}")
             when {
                 this.data.yMax == this.data.yMin        ->  this.axisLeft.axisMinimum = this.data.yMin - 0.05F
                 this.data.yMax - this.data.yMin < 10    ->  this.axisLeft.axisMinimum = this.data.yMin - 0.1F
                 this.data.yMax - this.data.yMin < 100   ->  this.axisLeft.axisMinimum = this.data.yMin - 1F
                 else ->  this.axisLeft.axisMinimum = this.data.yMin - 10F
             }
-
             this.setVisibleXRangeMaximum(6F)
+            setDragDecelerationEnabled(false)
             invalidate()
+
+            // 범위 설정 후 위치 이동 오류나서 추가함
+            // 부드러운 애니메이션 효과 설정
+//            if(data.size > 20) {
+//                isDragDecelerationEnabled = false
+//            }
         }
+    }
+
+    fun setDragDecelerationEnabled(isEnabled: Boolean) {
+        lineChart.isDragDecelerationEnabled = isEnabled
     }
 
     fun moveEndOfTheChart() {
@@ -126,13 +137,11 @@ class CustomLineChart @JvmOverloads constructor(context: Context, attrs: Attribu
     }
 
     fun stayTheChart() {
-//        Handler(Looper.getMainLooper()).postDelayed({
-//            Toast.makeText(context, "success", Toast.LENGTH_SHORT).show()
-//            lineChart.moveViewToX(lineChart.data?.entryCount!!.toFloat())
-//        }, 3000)
-
+        Logger.d("res :: ${lineChart.data.dataSets}")
         lineChart.run {
-            moveViewToX(data?.entryCount!!.toFloat())
+            moveViewToX(19F)
+            isDragDecelerationEnabled = true
+//            moveViewToX(data?.entryCount!!.toFloat())
         }
     }
 

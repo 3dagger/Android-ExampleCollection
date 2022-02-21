@@ -48,12 +48,10 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), MainNav
         viewModel.moveLast.observe(this) {
             when(it) {
                 true -> {
-//                    Logger.d("true")
-//                    viewDataBinding.lineChart.moveEndOfTheChart()
+                    viewDataBinding.lineChart.moveEndOfTheChart()
                 }
                 false -> {
-//                    Logger.d("false")
-//                    viewDataBinding.lineChart.moveEndOfTheChart()
+                    viewDataBinding.lineChart.stayTheChart()
                 }
             }
         }
@@ -61,6 +59,10 @@ class MainActivity : BaseActivity<ActivityMainBinding, MainViewModel>(), MainNav
         viewModel.isEmptyData.observe(this) {
             if(it) Toast.makeText(this, "더이상 데이터가 없습니다.", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    override fun invalidateFinish() {
+        viewDataBinding.lineChart.stayTheChart()
     }
 
     private fun showProgress() {

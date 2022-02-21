@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.dagger.realtimechart.base.BaseViewModel
 import com.github.mikephil.charting.data.Entry
+import com.orhanobut.logger.Logger
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
@@ -51,7 +52,6 @@ class MainViewModel(val remoteService: RemoteService) : BaseViewModel<MainNaviga
                             false -> if (isFirst) processingInitData(period, data) else processingAddData(period, data)
                         }
                     }
-//                    Logger.d("it.body :: ${it.body()}")
                 },
                 onError = {}
             )
@@ -72,16 +72,19 @@ class MainViewModel(val remoteService: RemoteService) : BaseViewModel<MainNaviga
         lastEntryData.clear()
         xAxisValue.clear()
 
+
+
         fakeData.rentReport.socReportArray?.forEach { (date, value) ->
             entryData.add(Entry(idx.toFloat(), value.toFloat()))
-            xAxisValue.add(if(period == "day") date else "${date}일")
+            xAxisValue.add(if(period == "day") date else "${date}월")
             idx++
         }
+
+        Logger.d("entryData :: $entryData\nxAxisValue :: $xAxisValue")
 
         lastEntryData.add(entryData[entryData.lastIndex])
         _batteryUsageEntryData.value = entryData
 
-//        _moveLast.value = true
         setMoveLast(true)
     }
 
@@ -102,9 +105,6 @@ class MainViewModel(val remoteService: RemoteService) : BaseViewModel<MainNaviga
         _batteryUsageEntryData.value = entryData
         setMoveLast(false)
     }
-
-
-    
 
     override fun disposableClear() {
         onCleared()

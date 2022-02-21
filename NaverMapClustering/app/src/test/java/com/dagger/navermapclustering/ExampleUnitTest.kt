@@ -1,4 +1,4 @@
-package com.dagger.myapplication
+package com.dagger.navermapclustering
 
 import org.junit.Test
 

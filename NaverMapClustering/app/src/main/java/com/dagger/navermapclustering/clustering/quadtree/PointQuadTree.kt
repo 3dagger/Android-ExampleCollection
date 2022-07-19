@@ -1,6 +1,7 @@
 package com.dagger.navermapclustering.clustering.quadtree
 
 import com.dagger.navermapclustering.clustering.geometry.Bounds
+import com.dagger.navermapclustering.clustering.geometry.Point
 
 /**
  * A quad tree which tracks items with a Point geometry.

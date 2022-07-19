@@ -20,7 +20,7 @@ class ScreenBasedAlgorithmAdapter<T : LeeamClusterItem>(private val mAlgorithm: 
 	}
 
 	override fun addItems(items: Collection<T>) {
-		mAlgorithm.addItems(items = items)
+		mAlgorithm.addItems(items)
 	}
 
 	override fun clearItems() {

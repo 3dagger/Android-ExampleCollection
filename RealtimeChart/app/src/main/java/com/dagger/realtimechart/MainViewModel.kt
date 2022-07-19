@@ -39,7 +39,7 @@ class MainViewModel(val remoteService: RemoteService) : BaseViewModel<MainNaviga
     }
 
     fun fetchData(period: String, page: Int, isFirst: Boolean) {
-        addDisposable(remoteService.apiGetDailyRental(page = page, period = period,token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyTWdwbVozTzRocTVmOTMtMGJ5YUxiOTNHVkpYOVVKek80UjFtRElpTk9vIiwicm9sZXMiOiJDTElFTlQiLCJleHAiOjE2NzYzNDAwNTcsImlzcyI6Ik5hbnVBUEkiLCJhdWQiOiJodHRwczovL2FwaS1uYW51LmFpbXMtcm5kLmNvbSJ9.py3Gd4-E_WSsq9l8mMWZzzrhq5RNfnT4Q7LCi_Zz63c")
+        addDisposable(remoteService.apiGetDailyRental(page = page, period = period,token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyTWdwbVozTzRocTVmOTMtMGJ5YUxiOTNHVkpYOVVKek80UjFtRElpTk9vIiwicm9sZXMiOiJDTElFTlQiLCJleHAiOjE2Nzg3NTM2MTQsImlzcyI6Ik5hbnVBUEkiLCJhdWQiOiJodHRwczovL2FwaS1uYW51LmFpbXMtcm5kLmNvbSJ9.O4BOnt4sFtMJGjT0_TyOLQ3eQHd20REZQ7WIU8Lx6qI")
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { showProgress() }
@@ -47,6 +47,8 @@ class MainViewModel(val remoteService: RemoteService) : BaseViewModel<MainNaviga
             .subscribeBy(
                 onSuccess = {
                     it.body()?.let { data ->
+
+//                        Logger.d("data.rentReport.socReportArray :: ${data.rentReport.socReportArray}")
                         when (data.rentReport.socReportArray.isNullOrEmpty()) {
                             true -> setEmptyData(isEmpty = true)
                             false -> if (isFirst) processingInitData(period, data) else processingAddData(period, data)
@@ -75,8 +77,8 @@ class MainViewModel(val remoteService: RemoteService) : BaseViewModel<MainNaviga
 
 
         fakeData.rentReport.socReportArray?.forEach { (date, value) ->
-            entryData.add(Entry(idx.toFloat(), value.toFloat()))
-            xAxisValue.add(if(period == "day") date else "${date}월")
+            entryData.add(Entry(idx.toFloat(), value!!.toFloat()))
+            xAxisValue.add((if(period == "day") date else "${date}월")!!)
             idx++
         }
 
@@ -90,15 +92,16 @@ class MainViewModel(val remoteService: RemoteService) : BaseViewModel<MainNaviga
 
     fun processingAddData(period: String, fakeData: FakeModel) {
         idx = 0
-        var previousIdx = fakeData.rentReport.socReport.size.toFloat()
+//        var previousIdx = fakeData.rentReport.socReport.size.toFloat()
+        var previousIdx = fakeData.rentReport.socReportArray!!.size.toFloat()
         entryData.forEach {
             it.x = previousIdx
             previousIdx++
         }
 
         fakeData.rentReport.socReportArray?.forEach { (date, value) ->
-            entryData.add(idx, Entry(idx.toFloat(), value.toFloat()))
-            xAxisValue.add(idx, if(period == "day") date else "${date}일")
+            entryData.add(idx, Entry(idx.toFloat(), value!!.toFloat()))
+            xAxisValue.add(idx, (if(period == "day") date else "${date}일")!!)
             idx++
         }
 

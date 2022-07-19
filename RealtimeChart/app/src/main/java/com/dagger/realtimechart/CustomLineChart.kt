@@ -96,11 +96,11 @@ class CustomLineChart @JvmOverloads constructor(context: Context, attrs: Attribu
         val firstData = createLineChart(data)
         val linkedList = LinkedList<Entry>()
         linkedList.add(data.last)
-        val b = createLastValueLineChart(linkedList)
+//        val b = createLastValueLineChart(linkedList)
 
         val dataSetArray: ArrayList<ILineDataSet> = ArrayList()
         dataSetArray.add(firstData)
-        dataSetArray.add(b)
+//        dataSetArray.add(b)
 
         lineChart.xAxis.valueFormatter = XAxisFormatter(xValue)
         lineChart.run {

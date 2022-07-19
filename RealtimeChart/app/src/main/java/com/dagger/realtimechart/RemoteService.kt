@@ -10,7 +10,7 @@ import retrofit2.http.Query
 interface RemoteService {
 
 //    @GET("https://0505fc60-494d-4010-9936-6c5e2398a10c.mock.pstmn.io/report/day")
-//    fun apiGetDailyRental() : Single<Response<FakeModel>>
+//    fun apiGetDailyRental(@Header("X-AUTH-TOKEN") token: String, @Query("page") page: Int) : Single<Response<FakeModel>>
 
     @GET("https://api-dev.aims-rnd.com/api/rent/reportpage/{period}")
     fun apiGetDailyRental(@Header("X-AUTH-TOKEN") token: String, @Path("period") period: String, @Query("page") page: Int) : Single<Response<FakeModel>>

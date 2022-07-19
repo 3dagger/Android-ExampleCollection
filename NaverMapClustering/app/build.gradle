@@ -107,9 +107,13 @@ dependencies {
 
 
     // GoogleMap : https://developers.google.com/maps/documentation/android-sdk/releases
-    implementation "com.google.android.gms:play-services-maps:$googlemap_version"
-    implementation "com.google.android.gms:play-services-location:$googlemap_version"
+//    implementation "com.google.android.gms:play-services-maps:$googlemap_version"
+//    implementation "com.google.android.gms:play-services-location:$googlemap_version"
 
     // Naver Map : https://auth.ncloud.com/login
     implementation "com.naver.maps:map-sdk:$navermap_version"
+
+    implementation 'androidx.work:work-runtime-ktx:2.7.0-beta01'
+
+//    implementation 'io.github.ParkSangGwon:tedclustering-naver:1.0.2'
 }

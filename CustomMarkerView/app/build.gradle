@@ -138,7 +138,7 @@ dependencies {
     implementation "com.kakao.sdk:v2-navi:$kakao_package_version"
 
     // Naver Login : https://developers.naver.com/docs/login/devguide/devguide.md
-    implementation "com.naver.nid:naveridlogin-android-sdk:$naver_login_version"
+//    implementation "com.naver.nid:naveridlogin-android-sdk:$naver_login_version"
 
     // Naver Map : https://auth.ncloud.com/login
     implementation "com.naver.maps:map-sdk:$navermap_version"
@@ -171,4 +171,6 @@ dependencies {
 
     // MpAndroidChart : https://github.com/PhilJay/MPAndroidChart
     implementation "com.github.PhilJay:MPAndroidChart:$mp_android_chart"
+
+    implementation 'androidx.work:work-runtime-ktx:2.7.0-beta01'
 }

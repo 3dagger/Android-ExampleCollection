@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="manage_shortcuts"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_alarm_24"
+        android:shortcutShortLabel="@string/next"
+        android:shortcutLongLabel="@string/next"
+        android:shortcutDisabledMessage="@string/previous">
+
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="kr.dagger.shortcutdemo"
+            android:targetClass="kr.dagger.shortcutdemo.MainActivity"/>
+
+        <categories android:name="android.shortcut.conversation" />
+
+    </shortcut>
+
+</shortcuts>

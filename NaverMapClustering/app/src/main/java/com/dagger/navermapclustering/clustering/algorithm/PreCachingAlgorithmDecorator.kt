@@ -5,8 +5,7 @@ import com.dagger.navermapclustering.clustering.Cluster
 import com.dagger.navermapclustering.clustering.LeeamClusterItem
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
-class PreCachingAlgorithmDecorator<T : LeeamClusterItem>(private val mAlgorithm: Algorithm<T>) :
-	Algorithm<T> {
+class PreCachingAlgorithmDecorator<T : LeeamClusterItem>(private val mAlgorithm: Algorithm<T>) : Algorithm<T> {
 
 	private val mCache = LruCache<Int, Set<Cluster<T>>>(5)
 	private val mCacheLock = ReentrantReadWriteLock()
@@ -48,7 +47,7 @@ class PreCachingAlgorithmDecorator<T : LeeamClusterItem>(private val mAlgorithm:
 	override fun getClusters(zoom: Double): Set<Cluster<T>> {
 		val discreteZoom = zoom.toInt()
 		val results = getClustersInternal(discreteZoom)
-		// TODO: Check if requests are already in-flight.
+
 		if (mCache.get(discreteZoom + 1) == null) {
 			Thread(PrecacheRunnable(discreteZoom + 1)).start()
 		}

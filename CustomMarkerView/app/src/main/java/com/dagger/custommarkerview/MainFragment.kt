@@ -37,9 +37,17 @@ class MainFragment: Fragment(), OnMapReadyCallback {
     private lateinit var locationSource                 : FusedLocationSource
     private lateinit var nMap                           : NaverMap
 
+    private lateinit var defaultDealershipMarker : ArrayList<Marker>
+    private lateinit var reduction20DealershipMarker : ArrayList<Marker>
+    private lateinit var reduction30DealershipMarker : ArrayList<Marker>
+
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         gpsTracker = GpsTracker(context = requireActivity())
         newMarkerMap = ArrayList()
+        defaultDealershipMarker = ArrayList()
+        reduction20DealershipMarker = ArrayList()
+        reduction30DealershipMarker = ArrayList()
 
         _binding = FragmentMainBinding.inflate(layoutInflater, container, false)
 
@@ -59,12 +67,22 @@ class MainFragment: Fragment(), OnMapReadyCallback {
 
     private fun initView() {
         binding.btnReset.setOnClickListener {
-            markerReset()
+//            markerReset()
+            val defaultMarkerLatLng = listOf(LatLng(38.13791380837467, 128.32567305621163), LatLng(38.06635581984284, 128.41125912070427), LatLng(38.102143574199246, 128.23473786268823), LatLng(38.003158236183204, 128.44602845940443), LatLng(37.93568739393951, 128.74825424964402))
+            val reduction20MarkerLatLng = listOf(LatLng(36.839477226445965, 129.08647881154113), LatLng(36.85596150116896, 129.2286144174804), LatLng(36.75810280434425, 129.36045035042386), LatLng(36.416976080199746, 129.14626395400418), LatLng(36.36961171758885, 129.30138869903993))
+            val reduction30MarkerLatLng = listOf(LatLng(35.58860512712293, 129.17368276997303), LatLng(35.361577515752224, 129.15308340545064), LatLng(35.466783295116734, 128.93885001441757), LatLng(35.294131480311634, 128.60332735497553), LatLng(35.357412874464664, 128.77449948396077))
+            defaultMarkerLatLng.forEach { drawDefaultMarker(nMap, it) }
+            reduction20MarkerLatLng.forEach { draw20ReductionMarker(nMap, it) }
+            reduction30MarkerLatLng.forEach { draw30ReductionMarker(nMap, it) }
         }
 
         binding.btnMarkerRemove.setOnClickListener {
-            removeMarker()
+//            removeMarker()
+            defaultDealershipMarker.forEach { it.map = null }
+            reduction20DealershipMarker.forEach { it.map = null }
+            reduction30DealershipMarker.forEach { it.map = null }
         }
+
     }
 
     private fun subscribeObservers() {
@@ -113,6 +131,58 @@ class MainFragment: Fragment(), OnMapReadyCallback {
         })
     }
 
+    private fun drawDefaultMarker(nMap: NaverMap, latlng: LatLng) {
+        defaultDealershipMarker.add(
+            Marker().apply {
+                position = latlng
+                map = nMap
+                width = Marker.SIZE_AUTO
+                height = Marker.SIZE_AUTO
+                icon = OverlayImage.fromResource(R.drawable.s_dealership_pin_icon)
+
+                setOnClickListener {
+                    icon = OverlayImage.fromResource(R.drawable.l_dealership_pin_icon)
+                    true
+                }
+
+            }
+        )
+    }
+
+    private fun draw20ReductionMarker(nMap: NaverMap, latlng: LatLng) {
+        reduction20DealershipMarker.add(
+            Marker().apply {
+                position = latlng
+                map = nMap
+                width = Marker.SIZE_AUTO
+                height = Marker.SIZE_AUTO
+                icon = OverlayImage.fromResource(R.drawable.s_80_dealership_pin_icon)
+
+                setOnClickListener {
+                    icon = OverlayImage.fromResource(R.drawable.l_80_dealership_pin_icon)
+                    true
+                }
+            }
+        )
+    }
+
+    private fun draw30ReductionMarker(nMap: NaverMap, latlng: LatLng) {
+        reduction30DealershipMarker.add(
+            Marker().apply {
+                position = latlng
+                map = nMap
+                width = Marker.SIZE_AUTO
+                height = Marker.SIZE_AUTO
+                icon = OverlayImage.fromResource(R.drawable.s_70_dealership_pin_icon)
+
+                setOnClickListener {
+                    icon = OverlayImage.fromResource(R.drawable.l_70_dealership_pin_icon)
+                    true
+                }
+            }
+        )
+    }
+
 
     private fun markerReset() {
         newMarkerMap.forEach { (_, b) -> b.map = null }
@@ -153,5 +223,15 @@ class MainFragment: Fragment(), OnMapReadyCallback {
         }
 
         onMapClickEvent()
+
+
+        val defaultMarkerLatLng = listOf(LatLng(38.13791380837467, 128.32567305621163), LatLng(38.06635581984284, 128.41125912070427), LatLng(38.102143574199246, 128.23473786268823), LatLng(38.003158236183204, 128.44602845940443), LatLng(37.93568739393951, 128.74825424964402))
+        val reduction20MarkerLatLng = listOf(LatLng(36.839477226445965, 129.08647881154113), LatLng(36.85596150116896, 129.2286144174804), LatLng(36.75810280434425, 129.36045035042386), LatLng(36.416976080199746, 129.14626395400418), LatLng(36.36961171758885, 129.30138869903993))
+        val reduction30MarkerLatLng = listOf(LatLng(35.58860512712293, 129.17368276997303), LatLng(35.361577515752224, 129.15308340545064), LatLng(35.466783295116734, 128.93885001441757), LatLng(35.294131480311634, 128.60332735497553), LatLng(35.357412874464664, 128.77449948396077))
+
+
+        defaultMarkerLatLng.forEach { drawDefaultMarker(nMap, it) }
+        reduction20MarkerLatLng.forEach { draw20ReductionMarker(nMap, it) }
+        reduction30MarkerLatLng.forEach { draw30ReductionMarker(nMap, it) }
     }
 }

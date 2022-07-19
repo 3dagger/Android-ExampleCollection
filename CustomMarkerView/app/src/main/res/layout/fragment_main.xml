@@ -14,22 +14,22 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnReset"
-            android:layout_alignParentRight="true"
-            android:text="INITIALIZATION"
-            android:textColor="@color/black"
-            android:backgroundTint="@color/teal_200"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"/>
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:backgroundTint="@color/teal_200"
+            android:text="INITIALIZATION"
+            android:textColor="@color/black" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnMarkerRemove"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/btnReset"
-            android:text="Marker Remove"
-            android:textColor="@color/black"
-            android:backgroundTint="@color/teal_200"
             android:layout_width="wrap_content"
-            android:layout_height="50dp"/>
+            android:layout_height="50dp"
+            android:layout_below="@id/btnReset"
+            android:layout_alignParentRight="true"
+            android:backgroundTint="@color/teal_200"
+            android:text="Marker Remove"
+            android:textColor="@color/black" />
 
 
     </RelativeLayout>

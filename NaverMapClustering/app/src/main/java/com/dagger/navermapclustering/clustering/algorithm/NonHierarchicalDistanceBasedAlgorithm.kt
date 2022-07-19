@@ -1,6 +1,12 @@
 package com.dagger.navermapclustering.clustering.algorithm
 
+import com.dagger.navermapclustering.clustering.Cluster
 import com.dagger.navermapclustering.clustering.LeeamClusterItem
+import com.dagger.navermapclustering.clustering.geometry.Bounds
+import com.dagger.navermapclustering.clustering.geometry.LeeamLatLng
+import com.dagger.navermapclustering.clustering.geometry.Point
+import com.dagger.navermapclustering.clustering.projection.SphericalMercatorProjection
+import com.dagger.navermapclustering.clustering.quadtree.PointQuadTree
 
 /**
  * A simple clustering algorithm with O(nlog n) performance. Resulting clusters are not
@@ -74,10 +80,7 @@ open class NonHierarchicalDistanceBasedAlgorithm<T : LeeamClusterItem> : Algorit
 	override fun getClusters(zoom: Double): Set<Cluster<T>> {
 		val discreteZoom = zoom.toInt()
 
-		val zoomSpecificSpan = maxDistanceBetweenClusteredItems.toDouble() / Math.pow(
-			2.0,
-			discreteZoom.toDouble()
-		) / 256.0
+		val zoomSpecificSpan = maxDistanceBetweenClusteredItems.toDouble() / Math.pow(2.0, discreteZoom.toDouble()) / 256.0
 
 		val visitedCandidates = HashSet<QuadItem<T>>()
 		val results = HashSet<Cluster<T>>()
@@ -92,8 +95,7 @@ open class NonHierarchicalDistanceBasedAlgorithm<T : LeeamClusterItem> : Algorit
 				}
 
 				val searchBounds = createBoundsFromSpan(candidate.point, zoomSpecificSpan)
-				val clusterItems: Collection<QuadItem<T>>
-				clusterItems = mQuadTree.search(searchBounds)
+				val clusterItems: Collection<QuadItem<T>> = mQuadTree.search(searchBounds)
 				if (clusterItems.size == 1) {
 					// Only the current marker is in range. Just add the single item to the results.
 					results.add(candidate)
@@ -101,7 +103,7 @@ open class NonHierarchicalDistanceBasedAlgorithm<T : LeeamClusterItem> : Algorit
 					distanceToCluster[candidate] = 0.0
 					continue
 				}
-				val cluster = StaticCluster<T>(candidate.mClusterItem.getTedLatLng())
+				val cluster = StaticCluster<T>(candidate.mClusterItem.getLatLng())
 				results.add(cluster)
 
 				for (clusterItem in clusterItems) {
@@ -146,9 +148,9 @@ open class NonHierarchicalDistanceBasedAlgorithm<T : LeeamClusterItem> : Algorit
 		)
 	}
 
-	internal class QuadItem<T : TedClusterItem>(val mClusterItem: T) : PointQuadTree.Item, Cluster<T> {
+	internal class QuadItem<T : LeeamClusterItem>(val mClusterItem: T) : PointQuadTree.Item, Cluster<T> {
 		override val point: Point
-		override val position: TedLatLng = mClusterItem.getTedLatLng()
+		override val position: LeeamLatLng = mClusterItem.getLatLng()
 		override val items: Set<T>
 
 		override val size: Int

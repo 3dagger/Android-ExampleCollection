@@ -19,11 +19,13 @@ import android.view.animation.DecelerateInterpolator
 import androidx.annotation.ColorInt
 import com.dagger.navermapclustering.R
 import com.dagger.navermapclustering.clustering.*
+import com.dagger.navermapclustering.clustering.geometry.LeeamLatLng
 import com.dagger.navermapclustering.clustering.geometry.LeeamLatLngBounds
 import com.dagger.navermapclustering.clustering.geometry.Point
 import com.dagger.navermapclustering.clustering.projection.SphericalMercatorProjection
 import com.dagger.navermapclustering.clustering.ui.IconGenerator
 import com.dagger.navermapclustering.clustering.ui.SquareTextView
+import com.orhanobut.logger.Logger
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantLock
@@ -45,9 +47,7 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 	 * Markers that are currently on the leeamMap.
 	 */
 	private var mMarkers: MutableSet<MarkerWithPosition<Marker, ImageDescriptor>> =
-		Collections.newSetFromMap(
-			ConcurrentHashMap()
-		)
+		Collections.newSetFromMap(ConcurrentHashMap())
 
 	/**
 	 * Icons for each bucket.
@@ -352,10 +352,10 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 						val animateTo = mSphericalMercatorProjection!!.toLatLng(closest)
 						markerModifier.animateThenRemove(marker, marker.position, animateTo)
 					} else {
-						markerModifier.remove(true, marker.tedMarker)
+						markerModifier.remove(true, marker.leeamMarker)
 					}
 				} else {
-					markerModifier.remove(onScreen, marker.tedMarker)
+					markerModifier.remove(onScreen, marker.leeamMarker)
 				}
 			}
 
@@ -468,8 +468,8 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 		 */
 		fun animate(
 			marker: MarkerWithPosition<Marker, ImageDescriptor>,
-			from: TedLatLng,
-			to: TedLatLng
+			from: LeeamLatLng,
+			to: LeeamLatLng
 		) {
 			lock.lock()
 			mAnimationTasks.add(AnimationTask(marker, from, to))
@@ -485,11 +485,7 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 		 * @param to     the position to animate to.
 		 */
 		@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-		fun animateThenRemove(
-			marker: MarkerWithPosition<Marker, ImageDescriptor>,
-			from: TedLatLng,
-			to: TedLatLng
-		) {
+		fun animateThenRemove(marker: MarkerWithPosition<Marker, ImageDescriptor>, from: LeeamLatLng, to: LeeamLatLng) {
 			lock.lock()
 			val animationTask = AnimationTask(marker, from, to)
 			animationTask.removeOnAnimationComplete(mClusterManager.markerManager)
@@ -591,7 +587,7 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 	/**
 	 * A cache of markers representing individual ClusterItems.
 	 */
-	private class MarkerCache<T, Marker : TedMarker<ImageDescriptor>, ImageDescriptor> {
+	private class MarkerCache<T, Marker : LeeamMarker<ImageDescriptor>, ImageDescriptor> {
 		private val mCache = HashMap<T, Marker>()
 		private val mCacheReverse = HashMap<Marker, T>()
 
@@ -616,13 +612,10 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 	}
 
 	/**
-	 * Called before the tedMarker for a Cluster is added to the leeamMap.
+	 * Called before the Marker for a Cluster is added to the leeamMap.
 	 * The default implementation draws a circle with a rough count of the number of items.
 	 */
-	private fun onBeforeClusterRendered(
-		cluster: Cluster<T>,
-		tedMarker: TedMarker<ImageDescriptor>
-	) {
+	private fun onBeforeClusterRendered(cluster: Cluster<T>, leeamMarker: LeeamMarker<ImageDescriptor>) {
 		val bucket = getBucket(cluster)
 		var imageDescriptor: ImageDescriptor? = mIcons.get(bucket)
 		if (imageDescriptor == null) {
@@ -630,16 +623,15 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 				val view = it.invoke(cluster)
 				IconGenerator.makeIcon(view)
 			} ?: getDefaultCluster(bucket)
-			imageDescriptor = tedMarker.fromBitmap(clusterBitmap)
+			imageDescriptor = leeamMarker.fromBitmap(clusterBitmap)
 			mIcons.put(bucket, imageDescriptor)
 		}
 		// TODO: consider adding anchor(.5, .5) (Individual markers will overlap more often)
-		tedMarker.setImageDescriptor(imageDescriptor!!)
+		leeamMarker.setImageDescriptor(imageDescriptor!!)
 	}
 
 	private fun getDefaultCluster(bucket: Int): Bitmap {
-		mColoredCircleBackground!!.paint.color =
-			builder.clusterBackground?.invoke(bucket) ?: getDefaultClusterBackground(bucket)
+		mColoredCircleBackground!!.paint.color = builder.clusterBackground?.invoke(bucket) ?: getDefaultClusterBackground(bucket)
 		val clusterText = builder.clusterText?.invoke(bucket) ?: getDefaultClusterText(bucket)
 		return mIconGenerator.makeIcon(clusterText)
 	}
@@ -658,8 +650,8 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 	 * @param tedMarker which you will obtain its TedClusterItem
 	 * @return a TedClusterItem from a tedMarker or null if it does not exists
 	 */
-	fun getClusterItem(tedMarker: Marker): T? {
-		return mMarkerCache[tedMarker]
+	fun getClusterItem(leeamMarker: Marker): T? {
+		return mMarkerCache[leeamMarker]
 	}
 
 	/**
@@ -676,8 +668,8 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 	 * @param tedMarker which you will obtain its Cluster
 	 * @return a Cluster from a tedMarker or null if it does not exists
 	 */
-	fun getCluster(tedMarker: TedMarker<ImageDescriptor>): Cluster<T>? {
-		return mMarkerToCluster[tedMarker]
+	fun getCluster(leeamMarker: LeeamMarker<ImageDescriptor>): Cluster<T>? {
+		return mMarkerToCluster[leeamMarker]
 	}
 
 	/**
@@ -693,7 +685,7 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 		(
 		private val cluster: Cluster<T>,
 		private val newMarkers: MutableSet<MarkerWithPosition<Marker, ImageDescriptor>>,
-		private val animateFrom: TedLatLng?
+		private val animateFrom: LeeamLatLng?
 	) {
 
 		fun perform(markerModifier: MarkerModifier) {
@@ -715,7 +707,7 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 							markerModifier.animate(
 								markerWithPosition,
 								animateFrom,
-								item.getTedLatLng()
+								item.getLatLng()
 							)
 						}
 					} else {
@@ -756,17 +748,17 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 	 * A TedMarker and its position. TedMarker.getTedLatLng() must be called from the UI thread, so this
 	 * object allows lookup from other threads.
 	 */
-	private class MarkerWithPosition<Marker : TedMarker<ImageDescriptor>, ImageDescriptor>(val tedMarker: Marker) {
-		var position: TedLatLng = tedMarker.position
+	private class MarkerWithPosition<Marker : LeeamMarker<ImageDescriptor>, ImageDescriptor>(val leeamMarker: Marker) {
+		var position: LeeamLatLng = leeamMarker.position
 
 		override fun equals(other: Any?): Boolean {
 			return if (other is MarkerWithPosition<*, *>) {
-				tedMarker == other.tedMarker
+				leeamMarker == other.leeamMarker
 			} else false
 		}
 
 		override fun hashCode(): Int {
-			return tedMarker.hashCode()
+			return leeamMarker.hashCode()
 		}
 	}
 
@@ -777,10 +769,10 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
 	private inner class AnimationTask(
 		private val markerWithPosition: MarkerWithPosition<Marker, ImageDescriptor>,
-		private val from: TedLatLng,
-		private val to: TedLatLng
+		private val from: LeeamLatLng,
+		private val to: LeeamLatLng
 	) : AnimatorListenerAdapter(), ValueAnimator.AnimatorUpdateListener {
-		private val tedMarker: Marker = markerWithPosition.tedMarker
+		private val leeamMarker: Marker = markerWithPosition.leeamMarker
 		private var mRemoveOnComplete: Boolean = false
 		private lateinit var mMarkerManager: MarkerManager<RealMarker, Marker, ImageDescriptor>
 
@@ -793,12 +785,13 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 		}
 
 		override fun onAnimationEnd(animation: Animator) {
+
 			if (mRemoveOnComplete) {
-				val cluster = mMarkerToCluster[tedMarker]
+				val cluster = mMarkerToCluster[leeamMarker]
 				mClusterToMarker.remove(cluster)
-				mMarkerCache.remove(tedMarker)
-				mMarkerToCluster.remove(tedMarker)
-				mMarkerManager.remove(tedMarker)
+				mMarkerCache.remove(leeamMarker)
+				mMarkerToCluster.remove(leeamMarker)
+				mMarkerManager.remove(leeamMarker)
 			}
 			markerWithPosition.position = to
 		}
@@ -818,7 +811,7 @@ internal class ClusterRenderer<Clustering, T : LeeamClusterItem, RealMarker, Mar
 				lngDelta -= Math.signum(lngDelta) * 360
 			}
 			val lng = lngDelta * fraction + from.longitude
-			tedMarker.position = TedLatLng(lat, lng)
+			leeamMarker.position = LeeamLatLng(lat, lng)
 		}
 	}
 

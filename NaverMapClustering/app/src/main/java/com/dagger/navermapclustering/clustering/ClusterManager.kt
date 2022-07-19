@@ -3,28 +3,31 @@ package com.dagger.navermapclustering.clustering
 import android.os.AsyncTask
 import android.os.Build
 import android.util.Log
-import com.dagger.navermapclustering.clustering.algorithm.PreCachingAlgorithmDecorator
-import com.dagger.navermapclustering.clustering.algorithm.ScreenBasedAlgorithm
-import com.dagger.navermapclustering.clustering.algorithm.ScreenBasedAlgorithmAdapter
+import com.dagger.navermapclustering.clustering.algorithm.*
+import com.dagger.navermapclustering.clustering.geometry.LeeamCameraPosition
+import com.dagger.navermapclustering.clustering.view.ClusterRenderer
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
 class ClusterManager<Clustering, C : LeeamClusterItem, RealMarker, Marker : LeeamMarker<ImageDescriptor>, Map, ImageDescriptor>(
 	builder: BaseBuilder<Clustering, C, RealMarker, Marker, Map, ImageDescriptor>
 ) {
 	val map: LeeamMap<RealMarker, Marker, ImageDescriptor> = builder.map
+
 	val markerManager: MarkerManager<RealMarker, Marker, ImageDescriptor> = MarkerManager(map)
 
-	val markerMarkerCollection: MarkerManager<RealMarker, Marker, ImageDescriptor>.MarkerCollection =
-		markerManager.newCollection()
-	val clusterMarkerMarkerCollection: MarkerManager<RealMarker, Marker, ImageDescriptor>.MarkerCollection =
-		markerManager.newCollection()
+	val markerMarkerCollection: MarkerManager<RealMarker, Marker, ImageDescriptor>.MarkerCollection = markerManager.newCollection()
+
+	val clusterMarkerMarkerCollection: MarkerManager<RealMarker, Marker, ImageDescriptor>.MarkerCollection = markerManager.newCollection()
 
 	private var mAlgorithm: ScreenBasedAlgorithm<C> = ScreenBasedAlgorithmAdapter(
 		PreCachingAlgorithmDecorator(NonHierarchicalDistanceBasedAlgorithm())
 	)
 	private val mAlgorithmLock = ReentrantReadWriteLock()
+
 	private var mRenderer: ClusterRenderer<Clustering, C, RealMarker, Marker, Map, ImageDescriptor>
-	private var previousCameraPosition: TedCameraPosition? = null
+
+	private var previousCameraPosition: LeeamCameraPosition? = null
+
 	private var mClusterTask: ClusterTask = ClusterTask()
 
 	var algorithm: Algorithm<C>?
@@ -40,7 +43,6 @@ class ClusterManager<Clustering, C : LeeamClusterItem, RealMarker, Marker : Leea
 		mRenderer = ClusterRenderer(builder, this)
 		builder.item?.let { addItem(it) }
 		builder.items?.let { addItems(it) }
-
 	}
 
 	internal fun onMarkerClick(marker: Marker) {
@@ -118,7 +120,7 @@ class ClusterManager<Clustering, C : LeeamClusterItem, RealMarker, Marker : Leea
 
 	}
 
-	private fun onCameraIdle(cameraPosition: TedCameraPosition) {
+	private fun onCameraIdle(cameraPosition: LeeamCameraPosition) {
 
 		mAlgorithm.onCameraChange(cameraPosition)
 
@@ -133,8 +135,7 @@ class ClusterManager<Clustering, C : LeeamClusterItem, RealMarker, Marker : Leea
 		}
 	}
 
-	private fun isSameZoom(cameraPosition: TedCameraPosition) =
-		previousCameraPosition?.zoom == cameraPosition.zoom
+	private fun isSameZoom(cameraPosition: LeeamCameraPosition) = previousCameraPosition?.zoom == cameraPosition.zoom
 
 	/**
 	 * Runs the clustering algorithm in a background thread, then re-paints when results come back.

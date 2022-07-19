@@ -19,8 +19,7 @@ abstract class BaseBuilder<Clustering, C : LeeamClusterItem, RealMarker, LM : Le
 	internal var items: Collection<C>? = null,
 	internal var item: C? = null,
 	private var markerMaker: ((clusterItem: C) -> RealMarker)? = null,
-	internal var clusterMaker: ((cluster: Cluster<C>) -> View)? = null
-	) {
+	internal var clusterMaker: ((cluster: Cluster<C>) -> View)? = null) {
 
 	fun customCluster(clusterMaker: ((cluster: Cluster<C>) -> View)) = apply { this.clusterMaker = clusterMaker }
 

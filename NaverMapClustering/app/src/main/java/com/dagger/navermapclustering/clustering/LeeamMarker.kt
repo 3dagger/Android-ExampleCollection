@@ -5,7 +5,7 @@ import com.dagger.navermapclustering.clustering.geometry.LeeamLatLng
 
 interface LeeamMarker<ImageDescriptor> {
 
-	fun serVisible(visible: Boolean)
+	fun setVisible(visible: Boolean)
 
 	var position: LeeamLatLng
 

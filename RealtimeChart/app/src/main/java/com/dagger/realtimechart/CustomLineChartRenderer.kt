@@ -11,6 +11,7 @@ import com.github.mikephil.charting.renderer.LineChartRenderer
 import com.github.mikephil.charting.utils.MPPointF
 import com.github.mikephil.charting.utils.Utils
 import com.github.mikephil.charting.utils.ViewPortHandler
+import com.orhanobut.logger.Logger
 
 class CustomLineChartRenderer constructor(private val context: Context, lineDataProvider: LineDataProvider, animator: ChartAnimator, viewPortHandler: ViewPortHandler) : LineChartRenderer(lineDataProvider, animator, viewPortHandler){
 
@@ -22,6 +23,7 @@ class CustomLineChartRenderer constructor(private val context: Context, lineData
 				val dataSet = dataSets[i]
 				if (!shouldDrawValues(dataSet) || dataSet.entryCount < 1) continue
 
+				Logger.d("dataSet :: ${dataSet.circleHoleColor}")
 				applyValueTextStyle(dataSet)
 				val trans = mChart.getTransformer(dataSet.axisDependency)
 
@@ -117,5 +119,10 @@ class CustomLineChartRenderer constructor(private val context: Context, lineData
 		canvas.restoreToCount(saveId)
 	}
 
+	override fun drawCircles(c: Canvas?) {
+		super.drawCircles(c)
+
+		Logger.d("in? :: c ")
+	}
 
 }

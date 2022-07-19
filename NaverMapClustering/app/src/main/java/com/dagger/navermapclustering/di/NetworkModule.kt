@@ -1,5 +1,6 @@
 package com.dagger.navermapclustering.di
 
+import com.dagger.navermapclustering.BuildConfig
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.Cache
@@ -28,9 +29,9 @@ var networkModules = module {
             readTimeout(10L, TimeUnit.SECONDS)
             retryOnConnectionFailure(true)
             addInterceptor(HttpLoggingInterceptor().apply {
-//                if (BuildConfig.DEBUG) {
-//                    level = HttpLoggingInterceptor.Level.BODY
-//                }
+                if (BuildConfig.DEBUG) {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
             })
         }.build()
     }

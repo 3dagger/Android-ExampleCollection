@@ -1,8 +1,8 @@
 package com.dagger.navermapclustering.clustering
 
-class MarkerManager<RealMarker, Marker : LeeamMarker<ImageDescriptor>, ImageDescriptor>(
-	private val leeamMap: LeeamMap<RealMarker, Marker, ImageDescriptor>
-) {
+import com.orhanobut.logger.Logger
+
+class MarkerManager<RealMarker, Marker : LeeamMarker<ImageDescriptor>, ImageDescriptor>(private val leeamMap: LeeamMap<RealMarker, Marker, ImageDescriptor>) {
 	private val allMarkerMap = HashMap<Marker, MarkerCollection>()
 
 	fun newCollection(): MarkerCollection = MarkerCollection()
@@ -51,10 +51,10 @@ class MarkerManager<RealMarker, Marker : LeeamMarker<ImageDescriptor>, ImageDesc
 			}
 		}
 
-		fun remove(tedMarker: Marker): Boolean {
-			if (mMarkers.remove(tedMarker)) {
-				allMarkerMap.remove(tedMarker)
-				leeamMap.removeMarker(tedMarker)
+		fun remove(leeamMarker: Marker): Boolean {
+			if (mMarkers.remove(leeamMarker)) {
+				allMarkerMap.remove(leeamMarker)
+				leeamMap.removeMarker(leeamMarker)
 				return true
 			}
 			return false
